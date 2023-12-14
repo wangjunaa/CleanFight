@@ -31,5 +31,15 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+	//增强输入
+	UPROPERTY(EditAnywhere,Category="Input")
+	UInputMappingContext* InputMappingContext;
+	UPROPERTY(EditAnywhere,Category="Input")
+	UInputAction* MoveForwardAction; 
+	UPROPERTY(EditAnywhere,Category="Input")
+	UInputAction* MoveRightAction;
+	UPROPERTY(EditAnywhere,Category="Input")
+	UInputAction* JumpAction;
 	
 };
