@@ -4,8 +4,7 @@
 #include "EnhancedInputSubsystems.h" 
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
-#include "GameFramework/CharacterMovementComponent.h"
-#include "GameFramework/PawnMovementComponent.h"
+#include "GameFramework/CharacterMovementComponent.h" 
 #include "GameFramework/SpringArmComponent.h"
 DEFINE_LOG_CATEGORY_STATIC(LogBaseCharacter,All,All)
 ABaseCharacter::ABaseCharacter()
@@ -19,12 +18,15 @@ ABaseCharacter::ABaseCharacter()
 	CameraComponent->SetupAttachment(SpringArmComponent);
 	
 	//设置
-	GetCapsuleComponent()->SetCapsuleHalfHeight(10);
-	GetCapsuleComponent()->SetCapsuleRadius(4);
+	GetCapsuleComponent()->SetCapsuleHalfHeight(18);
+	GetCapsuleComponent()->SetCapsuleRadius(8);
 	
 	GetMesh()->SetRelativeLocation({0,0,-10});
-	GetMesh()->SetRelativeRotation({0,0,-90});
+	GetMesh()->SetRelativeRotation({0,-90,0});
+	GetMesh()->SetRelativeScale3D({2,2,2});
 
+	CameraComponent->SetFieldOfView(AimScaleNormalValue);
+	
 	//设置运动属性
 	if(UCharacterMovementComponent* CharacterMovementComponent=GetCharacterMovement())
 	{
@@ -84,60 +86,165 @@ void ABaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 			EnhancedInputComponent->BindAction(RunAction,ETriggerEvent::Triggered,this,&ABaseCharacter::Action_Running);
 			EnhancedInputComponent->BindAction(RunAction,ETriggerEvent::Completed,this,&ABaseCharacter::Action_EndRun);
 		}
+		if(CrouchAction)
+		{
+			EnhancedInputComponent->BindAction(CrouchAction,ETriggerEvent::Started,this,&ABaseCharacter::Action_Crouch);
+			EnhancedInputComponent->BindAction(CrouchAction,ETriggerEvent::Completed,this,&ABaseCharacter::Action_EndCrouch); 
+		}
+		if(AimAction)
+		{
+			EnhancedInputComponent->BindAction(AimAction,ETriggerEvent::Started,this,&ABaseCharacter::Action_StartAim);
+			EnhancedInputComponent->BindAction(AimAction,ETriggerEvent::Completed,this,&ABaseCharacter::Action_EndAim);
+		}
+		if(FireAction)
+		{
+			EnhancedInputComponent->BindAction(AimAction,ETriggerEvent::Started,this,&ABaseCharacter::Action_StartFire);
+			EnhancedInputComponent->BindAction(AimAction,ETriggerEvent::Completed,this,&ABaseCharacter::Action_EndFire);
+		}
 	}
+}
+
+bool ABaseCharacter::Can_Jump()
+{ 
+	return !IsStiff() && !Aimming;
 }
 
 void ABaseCharacter::Action_MoveForward(const FInputActionValue& Value)
 {
-	if(IsStiff())return;
-
-	UE_LOG(LogBaseCharacter,Display,TEXT("MoveForward"));
+	if(!Can_Move())return; 
+	GetCharacterMovement()->MaxWalkSpeed=WalkSpeed;
+	UE_LOG(LogBaseCharacter,Display,TEXT("前后移动"));
 	AddMovementInput(CameraComponent->GetForwardVector(),Value.Get<float>());
 }
 
 void ABaseCharacter::Action_MoveRight(const FInputActionValue& Value)
 {
-	if(IsStiff())return;
+	if(!Can_Move())return;
 
-	UE_LOG(LogBaseCharacter,Display,TEXT("MoveRight"));
+	UE_LOG(LogBaseCharacter,Display,TEXT("左右移动"));
 	AddMovementInput(CameraComponent->GetRightVector(),Value.Get<float>());
 	
 }
 
 void ABaseCharacter::Action_Jump()
 {
-	if(IsStiff())return;
-	UE_LOG(LogBaseCharacter,Display,TEXT("Jump"));
+	if(!Can_Jump())return;
+	UE_LOG(LogBaseCharacter,Display,TEXT("跳跃"));
 	Jump();
 }
 
 void ABaseCharacter::Action_TurnAround(const FInputActionValue& Value)
 {
-	UE_LOG(LogBaseCharacter,Display,TEXT("TurnAround"));
+	UE_LOG(LogBaseCharacter,Display,TEXT("左右视角移动"));
 	AddControllerYawInput(Value.Get<float>());
 }
 
 void ABaseCharacter::Action_LookUp(const FInputActionValue& Value)
 {
-	UE_LOG(LogBaseCharacter,Display,TEXT("LookUp"));
+	UE_LOG(LogBaseCharacter,Display,TEXT("上下视角移动"));
 	AddControllerPitchInput(Value.Get<float>());
 }
 
 void ABaseCharacter::Action_Running()
-{ 
-	if(IsStiff())return;
-	UE_LOG(LogBaseCharacter,Display,TEXT("StartRun"));
-	check(GetCharacterMovement()); 
+{
+	if(!Can_Run())return;
 	GetCharacterMovement()->MaxWalkSpeed=RunSpeed;
+	//瞄准时不奔跑
+	if(IsAimming())
+	{
+		Action_MoveForward(1);
+		return; 
+	} 
+	if(!Running)
+	{
+		UE_LOG(LogBaseCharacter,Display,TEXT("开始奔跑"));
+		check(GetCharacterMovement());
+		Running=true; 
+	}
 	AddMovementInput(CameraComponent->GetForwardVector());
-	Running=true;
 }
 
 void ABaseCharacter::Action_EndRun()
 {
-	UE_LOG(LogBaseCharacter,Display,TEXT("EndRun")); 
+	UE_LOG(LogBaseCharacter,Display,TEXT("结束奔跑")); 
 	check(GetCharacterMovement()); 
-	GetCharacterMovement()->MaxWalkSpeed=WalkSpeed;
 	Running=false;
+}
+
+void ABaseCharacter::Action_Crouch()
+{
+	if(IsStiff() || IsRunning())return;
+	UE_LOG(LogBaseCharacter,Display,TEXT("蹲下")); 
+	Crouch=true;
+	check(GetCharacterMovement());
+	GetCharacterMovement()->MaxWalkSpeed=CrouchSpeed;
+}
+
+void ABaseCharacter::Action_EndCrouch()
+{
+	UE_LOG(LogBaseCharacter,Display,TEXT("起身")); 
+	Crouch=false; 
+	check(GetCharacterMovement());
+	GetCharacterMovement()->MaxWalkSpeed=WalkSpeed; 
+}
+
+void ABaseCharacter::Action_StartAim()
+{
+	check(CameraComponent);
+	check(GetWorld());
+	GetWorldTimerManager().SetTimer(AimScaleTimeHandle, this, &ABaseCharacter::AimScaleAmplifier, AimScaleRate, true);
+	GetController()->GetPawn()->bUseControllerRotationYaw=true;
+	Aimming=true;
+}
+
+void ABaseCharacter::Action_EndAim()
+{
+	check(CameraComponent);
+	check(GetWorld());  
+	GetWorldTimerManager().SetTimer(AimScaleTimeHandle,this,&ABaseCharacter::AimScaleReduce,AimScaleRate,true);
+	GetController()->GetPawn()->bUseControllerRotationYaw=false;
+	Aimming=false;
+}
+
+void ABaseCharacter::Action_StartFire()
+{
+	
+}
+
+void ABaseCharacter::Action_EndFire()
+{
+	
+}
+
+void ABaseCharacter::AimScaleAmplifier()
+{ 
+	float ScaleValue=(AimScaleNormalValue-AimScaleTargetValue)/(AimScaleTime/AimScaleRate);
+	CameraComponent->SetFieldOfView(CameraComponent->FieldOfView-ScaleValue);
+	if(CameraComponent->FieldOfView<=AimScaleTargetValue)
+	{
+		UE_LOG(LogBaseCharacter,Display,TEXT("视角放大完成"));
+		GetWorldTimerManager().ClearTimer(AimScaleTimeHandle);
+	}
+}
+
+void ABaseCharacter::AimScaleReduce()
+{ 
+	float ScaleValue=(AimScaleNormalValue-AimScaleTargetValue)/(AimScaleTime/AimScaleRate);
+	CameraComponent->SetFieldOfView(CameraComponent->FieldOfView+ScaleValue);
+	if(CameraComponent->FieldOfView>=AimScaleNormalValue)
+	{
+		UE_LOG(LogBaseCharacter,Display,TEXT("视角缩小完成"));
+		GetWorldTimerManager().ClearTimer(AimScaleTimeHandle);
+	}
+}
+
+void ABaseCharacter::Fire()
+{
+	
+}
+
+void ABaseCharacter::GetAimLine()
+{
+	
 }
 
