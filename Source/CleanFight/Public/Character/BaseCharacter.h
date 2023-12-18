@@ -5,6 +5,7 @@
 #include "GameFramework/Character.h"  
 #include "EnhancedInputSubsystems.h"  
 #include "BaseCharacter.generated.h"
+class UWeaponComponent;
 class USpringArmComponent;
 class UCameraComponent;
 
@@ -24,7 +25,8 @@ protected:
 	TObjectPtr<UCameraComponent> CameraComponent;
 	UPROPERTY(VisibleAnywhere,Category="Comp")
 	TObjectPtr<USpringArmComponent> SpringArmComponent;
-	
+	UPROPERTY(VisibleAnywhere,Category="Comp")
+	TObjectPtr<UWeaponComponent> WeaponComponent;
 	
 	//增强输入
 	UPROPERTY(EditAnywhere,Category="Input")
@@ -48,8 +50,7 @@ protected:
 	UPROPERTY(EditAnywhere,Category="Input")
 	TObjectPtr<UInputAction> FireAction;
 	
-public:	
-	virtual void Tick(float DeltaTime) override;
+public:	 
 
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
  
@@ -75,7 +76,7 @@ public:
 	bool Can_Run() {return !IsStiff() ;}
 	UFUNCTION(BlueprintCallable,Category="Movement")
 	bool Can_Jump();
-	
+
 private:
 	UPROPERTY(EditAnywhere,Category="Movement")
 	float CrouchSpeed=60;
@@ -102,9 +103,7 @@ private:
 	void Action_Crouch();
 	void Action_EndCrouch();
 	void Action_StartAim();
-	void Action_EndAim();
-	void Action_StartFire();
-	void Action_EndFire();
+	void Action_EndAim(); 
 
 	//调用计时器的速率
 	const float AimScaleRate=0.01;
@@ -120,11 +119,6 @@ private:
 	void AimScaleAmplifier();
 	//视角缩小
 	void AimScaleReduce();
-	
-	//射击
-	FTimerHandle FireTimeHandle;
-	float FireRate=0.1;
-	void Fire();
-	void GetAimLine();
+	 
 	bool Aimming=false;
 };

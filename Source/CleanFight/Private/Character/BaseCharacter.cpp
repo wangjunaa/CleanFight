@@ -3,19 +3,22 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h" 
 #include "Camera/CameraComponent.h"
+#include "Component/WeaponComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h" 
 #include "GameFramework/SpringArmComponent.h"
 DEFINE_LOG_CATEGORY_STATIC(LogBaseCharacter,All,All)
 ABaseCharacter::ABaseCharacter()
 {
-	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bCanEverTick = false;
 	//创建组件
 	CameraComponent=CreateDefaultSubobject<UCameraComponent>("CameraComponent");
 	SpringArmComponent=CreateDefaultSubobject<USpringArmComponent>("SpringArmComponent");
-	 
+	WeaponComponent=CreateDefaultSubobject<UWeaponComponent>("WeaponComp");
+	
 	SpringArmComponent->SetupAttachment(GetRootComponent());
 	CameraComponent->SetupAttachment(SpringArmComponent);
+
 	
 	//设置
 	GetCapsuleComponent()->SetCapsuleHalfHeight(18);
@@ -39,12 +42,7 @@ void ABaseCharacter::BeginPlay()
 	Super::BeginPlay();
 	
 }
-
-void ABaseCharacter::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-	
-}
+ 
 
 void ABaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
@@ -98,8 +96,9 @@ void ABaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 		}
 		if(FireAction)
 		{
-			EnhancedInputComponent->BindAction(AimAction,ETriggerEvent::Started,this,&ABaseCharacter::Action_StartFire);
-			EnhancedInputComponent->BindAction(AimAction,ETriggerEvent::Completed,this,&ABaseCharacter::Action_EndFire);
+			check(WeaponComponent);
+			EnhancedInputComponent->BindAction(AimAction,ETriggerEvent::Started,WeaponComponent.Get(),&UWeaponComponent::OnStartFire);
+			EnhancedInputComponent->BindAction(AimAction,ETriggerEvent::Completed,WeaponComponent.Get(),&UWeaponComponent::OnEndFire);
 		}
 	}
 }
@@ -108,6 +107,7 @@ bool ABaseCharacter::Can_Jump()
 { 
 	return !IsStiff() && !Aimming;
 }
+
 
 void ABaseCharacter::Action_MoveForward(const FInputActionValue& Value)
 {
@@ -205,19 +205,11 @@ void ABaseCharacter::Action_EndAim()
 	GetController()->GetPawn()->bUseControllerRotationYaw=false;
 	Aimming=false;
 }
-
-void ABaseCharacter::Action_StartFire()
-{
-	
-}
-
-void ABaseCharacter::Action_EndFire()
-{
-	
-}
+ 
 
 void ABaseCharacter::AimScaleAmplifier()
-{ 
+{
+	//每次放大多少
 	float ScaleValue=(AimScaleNormalValue-AimScaleTargetValue)/(AimScaleTime/AimScaleRate);
 	CameraComponent->SetFieldOfView(CameraComponent->FieldOfView-ScaleValue);
 	if(CameraComponent->FieldOfView<=AimScaleTargetValue)
@@ -229,6 +221,7 @@ void ABaseCharacter::AimScaleAmplifier()
 
 void ABaseCharacter::AimScaleReduce()
 { 
+	//每次缩小多少
 	float ScaleValue=(AimScaleNormalValue-AimScaleTargetValue)/(AimScaleTime/AimScaleRate);
 	CameraComponent->SetFieldOfView(CameraComponent->FieldOfView+ScaleValue);
 	if(CameraComponent->FieldOfView>=AimScaleNormalValue)
@@ -238,13 +231,4 @@ void ABaseCharacter::AimScaleReduce()
 	}
 }
 
-void ABaseCharacter::Fire()
-{
-	
-}
-
-void ABaseCharacter::GetAimLine()
-{
-	
-}
 
