@@ -2,6 +2,7 @@
 
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h" 
+#include "SoundSubmixDefaultColorPalette.h"
 #include "Camera/CameraComponent.h"
 #include "Component/WeaponComponent.h"
 #include "Components/CapsuleComponent.h"
@@ -94,7 +95,7 @@ void ABaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 			EnhancedInputComponent->BindAction(AimAction,ETriggerEvent::Started,this,&ABaseCharacter::Action_StartAim);
 			EnhancedInputComponent->BindAction(AimAction,ETriggerEvent::Completed,this,&ABaseCharacter::Action_EndAim);
 		}
-		if(FireAction)
+		if(FireAction) 
 		{
 			check(WeaponComponent);
 			EnhancedInputComponent->BindAction(AimAction,ETriggerEvent::Started,WeaponComponent.Get(),&UWeaponComponent::OnStartFire);
@@ -102,12 +103,6 @@ void ABaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 		}
 	}
 }
-
-bool ABaseCharacter::Can_Jump()
-{ 
-	return !IsStiff() && !Aimming;
-}
-
 
 void ABaseCharacter::Action_MoveForward(const FInputActionValue& Value)
 {
@@ -194,7 +189,7 @@ void ABaseCharacter::Action_StartAim()
 	check(GetWorld());
 	GetWorldTimerManager().SetTimer(AimScaleTimeHandle, this, &ABaseCharacter::AimScaleAmplifier, AimScaleRate, true);
 	GetController()->GetPawn()->bUseControllerRotationYaw=true;
-	Aimming=true;
+	Aiming=true;
 }
 
 void ABaseCharacter::Action_EndAim()
@@ -203,7 +198,7 @@ void ABaseCharacter::Action_EndAim()
 	check(GetWorld());  
 	GetWorldTimerManager().SetTimer(AimScaleTimeHandle,this,&ABaseCharacter::AimScaleReduce,AimScaleRate,true);
 	GetController()->GetPawn()->bUseControllerRotationYaw=false;
-	Aimming=false;
+	Aiming=false;
 }
  
 
@@ -232,3 +227,19 @@ void ABaseCharacter::AimScaleReduce()
 }
 
 
+FHitResult ABaseCharacter::GetAimResult()
+{
+	const AController* OwnerController=GetController();
+	if(!OwnerController)return {};
+
+	FVector ViewLocation;
+	FRotator ViewRotation;
+	OwnerController->GetPlayerViewPoint(ViewLocation,ViewRotation); 
+	FVector EndPoint=ViewLocation+ViewRotation.Vector()*1000;
+
+	FHitResult HitResult;
+	FCollisionQueryParams CollisionQueryParams;
+	CollisionQueryParams.AddIgnoredActor(GetOwner());
+	GetWorld()->LineTraceSingleByChannel(HitResult,ViewLocation,EndPoint,ECC_Visibility,CollisionQueryParams);
+	return HitResult;
+}

@@ -68,14 +68,14 @@ public:
 	UFUNCTION(BlueprintCallable,Category="State")
 	bool IsCrouch() {return Crouch;}
 	UFUNCTION(BlueprintCallable,Category="State")
-	bool IsAimming() {return Aimming;}
+	bool IsAimming() {return Aiming;}
 	
 	UFUNCTION(BlueprintCallable,Category="Movement")
 	bool Can_Move() {return !IsStiff();}
 	UFUNCTION(BlueprintCallable,Category="Movement")
 	bool Can_Run() {return !IsStiff() ;}
 	UFUNCTION(BlueprintCallable,Category="Movement")
-	bool Can_Jump();
+	bool Can_Jump(){return !IsStiff() && !Aiming;};
 
 private:
 	UPROPERTY(EditAnywhere,Category="Movement")
@@ -120,5 +120,7 @@ private:
 	//视角缩小
 	void AimScaleReduce();
 	 
-	bool Aimming=false;
+	bool Aiming=false;
+
+	FHitResult GetAimResult();
 };

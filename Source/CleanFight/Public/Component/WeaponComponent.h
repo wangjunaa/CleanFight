@@ -25,17 +25,24 @@ protected:
 public:	
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-	UPROPERTY(EditAnywhere,Category="Weapon")
-	TObjectPtr<AWeapon> CurrentWeapon;
-	
+	UFUNCTION(Blueprintable,Category="Weapon")
+	AWeapon* GetCurrentWeapon();
+ 
 	void OnStartFire();
+	void MakeShoot();
 	void OnEndFire();
 private:
 	
 	UFUNCTION(Blueprintable,Category="Weapon")
 	FTransform GetWeaponSocketTransform() const;
 	
-	void GetAimLine(FVector& StartPoint,FVector& EndPoint);
+	void GetAimLine(FVector& TargetPoint) const;
 
-	AController* GetOwnerController();
+	AController* GetOwnerController() const;
+
+	int CurrentWeaponIndex=0;
+	TArray<TObjectPtr<AWeapon>> WeaponList;
+
+	FTimerHandle FireTimerHandle;
+
 };

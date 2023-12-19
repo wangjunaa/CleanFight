@@ -2,8 +2,11 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "NiagaraSystem.h"
 #include "GameFramework/Actor.h"
 #include "Weapon.generated.h"
+
+class AProjectile;
 
 UCLASS()
 class CLEANFIGHT_API AWeapon : public AActor
@@ -15,8 +18,18 @@ public:
 
 	UFUNCTION(Blueprintable,Category="Weapon")
 	FVector GetMuzzleLocation() const;
+	
+	UFUNCTION(Blueprintable,Category="Weapon")
+	float GetFireRate() const {return FireRate;}
+
+	UFUNCTION(Blueprintable,Category="Weapon")
+	void MakeShoot(FVector TargetPoint);
+	
+
+	UPROPERTY(EditAnywhere,Category="Weapon")
+	TObjectPtr<AProjectile> Projectile;
 protected:
-	virtual void BeginPlay();
+	virtual void BeginPlay() override;
 
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<USceneComponent>Scene;
@@ -25,5 +38,11 @@ protected:
 	
 	UPROPERTY(VisibleAnywhere,Category="Weapon")
 	FName MuzzleSocketName="MuzzleSocket";
-private:	
+
+private: 
+	UPROPERTY(VisibleAnywhere,Category="Weapon")
+	float FireRate=0.3;
+
+	UPROPERTY(EditDefaultsOnly,Category	="UI")
+	UTexture2D* WeaponIcon=nullptr;
 };
