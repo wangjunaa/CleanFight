@@ -14,7 +14,7 @@ AWeapon::AWeapon()
 	WeaponMesh->SetupAttachment(Scene);
 }
  
-void AWeapon::MakeShoot(const FVector& TargetPoint) 
+void AWeapon::MakeShoot(const FVector& TargetPoint) const
 {
 	const FVector Location=GetMuzzleLocation();
 	const FRotator Rotator=UKismetMathLibrary::FindLookAtRotation(Location,TargetPoint); 

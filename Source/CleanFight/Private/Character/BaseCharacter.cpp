@@ -3,6 +3,7 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"  
 #include "Camera/CameraComponent.h"
+#include "Component/HealthComponent.h"
 #include "Component/WeaponComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h" 
@@ -40,10 +41,10 @@ ABaseCharacter::ABaseCharacter()
 void ABaseCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	
+	BindDelegate();
 }
- 
 
+ 
 void ABaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
@@ -97,11 +98,12 @@ void ABaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 		if(FireAction) 
 		{
 			check(WeaponComponent);
-			EnhancedInputComponent->BindAction(FireAction,ETriggerEvent::Triggered,WeaponComponent.Get(),&UWeaponComponent::OnStartFire);
-			EnhancedInputComponent->BindAction(FireAction,ETriggerEvent::Completed,WeaponComponent.Get(),&UWeaponComponent::OnEndFire);
+			EnhancedInputComponent->BindAction(FireAction,ETriggerEvent::Triggered,this,&ABaseCharacter::OnFire);
+			EnhancedInputComponent->BindAction(FireAction,ETriggerEvent::Completed,this,&ABaseCharacter::OnEndFire);
 		}
 	}
 }
+ 
 
 void ABaseCharacter::Action_MoveForward(const FInputActionValue& Value)
 {
@@ -149,11 +151,11 @@ void ABaseCharacter::Action_Running()
 		Action_MoveForward(1);
 		return; 
 	} 
-	if(!Running)
+	if(!bRunning)
 	{
 		UE_LOG(LogBaseCharacter,Display,TEXT("开始奔跑"));
 		check(GetCharacterMovement());
-		Running=true; 
+		bRunning=true; 
 	}
 	AddMovementInput(CameraComponent->GetForwardVector());
 }
@@ -162,14 +164,14 @@ void ABaseCharacter::Action_EndRun()
 {
 	UE_LOG(LogBaseCharacter,Display,TEXT("结束奔跑")); 
 	check(GetCharacterMovement()); 
-	Running=false;
+	bRunning=false;
 }
 
 void ABaseCharacter::Action_Crouch()
 {
 	if(IsStiff() || IsRunning())return;
 	UE_LOG(LogBaseCharacter,Display,TEXT("蹲下")); 
-	Crouch=true;
+	bCrouch=true;
 	check(GetCharacterMovement());
 	GetCharacterMovement()->MaxWalkSpeed=CrouchSpeed;
 }
@@ -177,7 +179,7 @@ void ABaseCharacter::Action_Crouch()
 void ABaseCharacter::Action_EndCrouch()
 {
 	UE_LOG(LogBaseCharacter,Display,TEXT("起身")); 
-	Crouch=false; 
+	bCrouch=false; 
 	check(GetCharacterMovement());
 	GetCharacterMovement()->MaxWalkSpeed=WalkSpeed; 
 }
@@ -188,7 +190,7 @@ void ABaseCharacter::Action_StartAim()
 	check(GetWorld());
 	GetWorldTimerManager().SetTimer(AimScaleTimeHandle, this, &ABaseCharacter::AimScaleAmplifier, AimScaleRate, true);
 	GetController()->GetPawn()->bUseControllerRotationYaw=true;
-	Aiming=true;
+	bAiming=true;
 }
 
 void ABaseCharacter::Action_EndAim()
@@ -197,7 +199,7 @@ void ABaseCharacter::Action_EndAim()
 	check(GetWorld());  
 	GetWorldTimerManager().SetTimer(AimScaleTimeHandle,this,&ABaseCharacter::AimScaleReduce,AimScaleRate,true);
 	GetController()->GetPawn()->bUseControllerRotationYaw=false;
-	Aiming=false;
+	bAiming=false;
 }
  
 
@@ -234,7 +236,7 @@ FHitResult ABaseCharacter::GetAimResult() const
 	FVector ViewLocation;
 	FRotator ViewRotation;
 	OwnerController->GetPlayerViewPoint(ViewLocation,ViewRotation); 
-	FVector EndPoint=ViewLocation+ViewRotation.Vector()*1000;
+	FVector EndPoint=ViewLocation+ViewRotation.Vector()*10000;
 
 	FHitResult HitResult;
 	FCollisionQueryParams CollisionQueryParams;
@@ -242,3 +244,16 @@ FHitResult ABaseCharacter::GetAimResult() const
 	GetWorld()->LineTraceSingleByChannel(HitResult,ViewLocation,EndPoint,ECC_Visibility,CollisionQueryParams);
 	return HitResult;
 }
+
+void ABaseCharacter::OnFire()
+{
+	if(!WeaponComponent)return;
+	WeaponComponent->Fire();
+	bIsFiring=true;
+}
+
+void ABaseCharacter::OnEndFire()
+{
+	bIsFiring=false;
+}
+ 

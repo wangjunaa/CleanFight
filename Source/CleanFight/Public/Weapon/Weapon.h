@@ -23,7 +23,7 @@ public:
 	float GetFireRate() const {return FireRate;}
 
 	UFUNCTION(Blueprintable,Category="Weapon")
-	void MakeShoot(const FVector& TargetPoint) ;
+	void MakeShoot(const FVector& TargetPoint) const;
 	
 	UPROPERTY(EditAnywhere,Category="Weapon")
 	TSubclassOf<AProjectile> ProjectileClass;

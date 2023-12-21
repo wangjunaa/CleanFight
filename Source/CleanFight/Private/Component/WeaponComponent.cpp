@@ -2,7 +2,7 @@
 
 #include "Component/WeaponComponent.h"
 
-#include "Character/BaseCharacter.h"  
+#include "Character/BaseCharacter.h"
 #include "Weapon/Weapon.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogWeaponComp,All,All);
@@ -31,11 +31,11 @@ TSubclassOf<AWeapon> UWeaponComponent::GetCurrentWeaponClass()
 	return WeaponList[CurrentWeaponIndex];
 }
 
-void UWeaponComponent::OnStartFire()
+void UWeaponComponent::Fire()
 {
 	if(!GetCurrentWeapon() || bFireInCD)return;
 	check(GetWorld());
-	MakeShoot();
+	MakeShoot();   
 }
  
 void UWeaponComponent::MakeShoot()
@@ -45,20 +45,15 @@ void UWeaponComponent::MakeShoot()
 	bFireInCD=true;
 	const FVector TargetPoint=GetFireTargetPoint(); 
 	GetCurrentWeapon()->MakeShoot(TargetPoint);
-	//射击cd
+ 
+	//射击cd 
 	const float FireRate=GetCurrentWeapon()->GetFireRate();
 	GetWorld()->GetTimerManager().SetTimer(FireCDTimerHandle, this,&UWeaponComponent::FireCDFinish,FireRate,false,FireRate);
 }
 
-void UWeaponComponent::OnEndFire()
-{ 
-	if(!GetCurrentWeapon())return;
-	check(GetWorld()); 
-}
-
 FTransform UWeaponComponent::GetWeaponSocketTransform() const
 {
-	const ABaseCharacter* Character= CastChecked<ABaseCharacter>(GetOwner());
+	const ABaseCharacter* Character= Cast<ABaseCharacter>(GetOwner());
 	check(Character);
 	return Character->GetMesh()->GetSocketTransform(WeaponSocketName);
 }

@@ -49,32 +49,34 @@ protected:
 	TObjectPtr<UInputAction> AimAction;
 	UPROPERTY(EditAnywhere,Category="Input")
 	TObjectPtr<UInputAction> FireAction;
-	
+
+	virtual void BindDelegate(); 
 public:	 
 
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
  
 	UFUNCTION(BlueprintCallable,Category="Movement")
-	bool IsRunning() const {return Running;} 
+	bool IsRunning() const {return bRunning;} 
 	UFUNCTION(BlueprintCallable,Category="State")
-	bool IsStiff() const {return Stiffness;} 
+	bool IsStiff() const {return bStiffness;} 
 	UFUNCTION(BlueprintCallable,Category="State")
-	bool IsCrouch() const{return Crouch;}
+	bool IsCrouch() const{return bCrouch;}
 	UFUNCTION(BlueprintCallable,Category="State")
-	bool IsAiming() const{return Aiming;}
-	
+	bool IsAiming() const{return bAiming;} 
+	UFUNCTION(BlueprintCallable,Category="State")
+	bool IsFiring() const{return bIsFiring;};
 	//硬直
 	UFUNCTION(BlueprintCallable,Category="State")
-	void StartStiffness() {Stiffness=true;} 
+	void StartStiffness() {bStiffness=true;} 
 	UFUNCTION(BlueprintCallable,Category="State")
-	void EndStiffness() {Stiffness=false;} 
+	void EndStiffness() {bStiffness=false;} 
 	
 	UFUNCTION(BlueprintCallable,Category="Movement")
 	bool Can_Move() const {return !IsStiff();}
 	UFUNCTION(BlueprintCallable,Category="Movement")
 	bool Can_Run() const {return !IsStiff() ;}
 	UFUNCTION(BlueprintCallable,Category="Movement")
-	bool Can_Jump() const {return !IsStiff() && !Aiming;};
+	bool Can_Jump() const {return !IsStiff() && !bAiming;};
 
 private:
 	UPROPERTY(EditAnywhere,Category="Movement")
@@ -85,11 +87,11 @@ private:
 	float RunSpeed=200;
 	UPROPERTY()
 	//判断是否在僵直
-	bool Stiffness=false;
-	//判断是否在奔跑
-	bool Running=false;
+	bool bStiffness=false; 
 	//判断是否蹲下
-	bool Crouch=false;
+	bool bCrouch=false; 
+	bool bAiming=false;
+	bool bRunning=false;
 
 	//输入绑定委托
 	void Action_MoveForward(const FInputActionValue& Value); 
@@ -118,8 +120,9 @@ private:
 	void AimScaleAmplifier();
 	//视角缩小
 	void AimScaleReduce();
-	 
-	bool Aiming=false;
-
 	FHitResult GetAimResult() const;
+
+	void OnFire();
+	void OnEndFire();
+	bool bIsFiring=false;
 };
