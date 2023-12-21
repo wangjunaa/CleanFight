@@ -31,18 +31,18 @@ public:
 	TSubclassOf<AWeapon> GetCurrentWeaponClass();
 	
 	void OnStartFire();
-	void MakeShoot() const;
+	void MakeShoot();
 	void OnEndFire();
 
 	UFUNCTION(Blueprintable)
-	bool IsFiring(){return Firing;}
+	bool IsFiring() const {return Firing;}
 	
 private:
 	
 	UFUNCTION(Blueprintable,Category="Weapon")
 	FTransform GetWeaponSocketTransform() const;
-	
-	void GetAimLine(FVector& TargetPoint) const;
+	FVector GetFireTargetPoint();
+	FVector GetAimPoint() const;
 
 	AController* GetOwnerController() const;
 

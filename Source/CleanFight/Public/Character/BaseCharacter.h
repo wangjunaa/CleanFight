@@ -55,27 +55,26 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
  
 	UFUNCTION(BlueprintCallable,Category="Movement")
-	bool IsRunning() const {return Running;}
+	bool IsRunning() const {return Running;} 
+	UFUNCTION(BlueprintCallable,Category="State")
+	bool IsStiff() const {return Stiffness;} 
+	UFUNCTION(BlueprintCallable,Category="State")
+	bool IsCrouch() const{return Crouch;}
+	UFUNCTION(BlueprintCallable,Category="State")
+	bool IsAiming() const{return Aiming;}
 	
 	//硬直
 	UFUNCTION(BlueprintCallable,Category="State")
 	void StartStiffness() {Stiffness=true;} 
 	UFUNCTION(BlueprintCallable,Category="State")
 	void EndStiffness() {Stiffness=false;} 
-	UFUNCTION(BlueprintCallable,Category="State")
-	bool IsStiff() const {return Stiffness;}
-	
-	UFUNCTION(BlueprintCallable,Category="State")
-	bool IsCrouch() {return Crouch;}
-	UFUNCTION(BlueprintCallable,Category="State")
-	bool IsAimming() {return Aiming;}
 	
 	UFUNCTION(BlueprintCallable,Category="Movement")
-	bool Can_Move() {return !IsStiff();}
+	bool Can_Move() const {return !IsStiff();}
 	UFUNCTION(BlueprintCallable,Category="Movement")
-	bool Can_Run() {return !IsStiff() ;}
+	bool Can_Run() const {return !IsStiff() ;}
 	UFUNCTION(BlueprintCallable,Category="Movement")
-	bool Can_Jump(){return !IsStiff() && !Aiming;};
+	bool Can_Jump() const {return !IsStiff() && !Aiming;};
 
 private:
 	UPROPERTY(EditAnywhere,Category="Movement")

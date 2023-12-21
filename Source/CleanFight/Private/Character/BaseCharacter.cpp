@@ -144,7 +144,7 @@ void ABaseCharacter::Action_Running()
 	if(!Can_Run())return;
 	GetCharacterMovement()->MaxWalkSpeed=RunSpeed;
 	//瞄准时不奔跑
-	if(IsAimming())
+	if(IsAiming())
 	{
 		Action_MoveForward(1);
 		return; 

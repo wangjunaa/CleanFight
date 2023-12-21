@@ -40,10 +40,9 @@ void UWeaponComponent::OnStartFire()
 	Firing=true;
 }
 
-void UWeaponComponent::MakeShoot() const
+void UWeaponComponent::MakeShoot()
 {
-	FVector TargetPoint;
-	GetAimLine(TargetPoint);
+	 FVector TargetPoint=GetFireTargetPoint(); 
 	GetCurrentWeapon()->MakeShoot(TargetPoint);
 }
 
@@ -62,30 +61,43 @@ FTransform UWeaponComponent::GetWeaponSocketTransform() const
 	return Character->GetMesh()->GetSocketTransform(WeaponSocketName);
 }
 
-void UWeaponComponent::GetAimLine(FVector& TargetPoint) const
+FVector UWeaponComponent::GetFireTargetPoint()
+{ 
+	const ABaseCharacter* Character=Cast<ABaseCharacter>(GetOwner());
+	if(Character->IsAiming())
+	{
+		return GetAimPoint();
+	}else
+	{
+		return Character->GetActorForwardVector()*1000+Character->GetActorLocation();
+	}
+}
+
+FVector UWeaponComponent::GetAimPoint() const
 {
 	const AController* OwnerController=GetOwnerController();
-	if(!OwnerController)return;
+	if(!OwnerController)return{};
 
 	FVector ViewLocation;
 	FRotator ViewRotation;
 	OwnerController->GetPlayerViewPoint(ViewLocation,ViewRotation);
  
-	TargetPoint=ViewLocation+ViewRotation.Vector()*1000;
+	FVector TargetPoint=ViewLocation+ViewRotation.Vector()*1000;
 
 	FHitResult HitResult;
 	FCollisionQueryParams CollisionQueryParams;
 	CollisionQueryParams.AddIgnoredActor(GetOwner());
 	GetWorld()->LineTraceSingleByChannel(HitResult,ViewLocation,TargetPoint,ECC_Visibility,CollisionQueryParams);
 	if(HitResult.bBlockingHit)
-		TargetPoint=HitResult.ImpactPoint; 
+		TargetPoint=HitResult.ImpactPoint;
+	return TargetPoint;
 }
 
 
 AController* UWeaponComponent::GetOwnerController() const
 {
-	AController* Controller=Cast<AController>(GetOwner());
-	return Controller;
+	const ABaseCharacter* Owner=Cast<ABaseCharacter>(GetOwner());
+	return Owner->GetController();
 }
 
 void UWeaponComponent::SpawnWeapon()
