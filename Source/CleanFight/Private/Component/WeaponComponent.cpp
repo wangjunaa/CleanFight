@@ -65,7 +65,7 @@ FTransform UWeaponComponent::GetWeaponSocketTransform() const
 void UWeaponComponent::GetAimLine(FVector& TargetPoint) const
 {
 	const AController* OwnerController=GetOwnerController();
-	check(OwnerController);
+	if(!OwnerController)return;
 
 	FVector ViewLocation;
 	FRotator ViewRotation;
