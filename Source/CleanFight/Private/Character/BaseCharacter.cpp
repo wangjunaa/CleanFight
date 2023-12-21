@@ -97,7 +97,7 @@ void ABaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 		if(FireAction) 
 		{
 			check(WeaponComponent);
-			EnhancedInputComponent->BindAction(FireAction,ETriggerEvent::Started,WeaponComponent.Get(),&UWeaponComponent::OnStartFire);
+			EnhancedInputComponent->BindAction(FireAction,ETriggerEvent::Triggered,WeaponComponent.Get(),&UWeaponComponent::OnStartFire);
 			EnhancedInputComponent->BindAction(FireAction,ETriggerEvent::Completed,WeaponComponent.Get(),&UWeaponComponent::OnEndFire);
 		}
 	}
@@ -204,7 +204,7 @@ void ABaseCharacter::Action_EndAim()
 void ABaseCharacter::AimScaleAmplifier()
 {
 	//每次放大多少
-	float ScaleValue=(AimScaleNormalValue-AimScaleTargetValue)/(AimScaleTime/AimScaleRate);
+	const float ScaleValue=(AimScaleNormalValue-AimScaleTargetValue)/(AimScaleTime/AimScaleRate);
 	CameraComponent->SetFieldOfView(CameraComponent->FieldOfView-ScaleValue);
 	if(CameraComponent->FieldOfView<=AimScaleTargetValue)
 	{
@@ -216,7 +216,7 @@ void ABaseCharacter::AimScaleAmplifier()
 void ABaseCharacter::AimScaleReduce()
 { 
 	//每次缩小多少
-	float ScaleValue=(AimScaleNormalValue-AimScaleTargetValue)/(AimScaleTime/AimScaleRate);
+	const float ScaleValue=(AimScaleNormalValue-AimScaleTargetValue)/(AimScaleTime/AimScaleRate);
 	CameraComponent->SetFieldOfView(CameraComponent->FieldOfView+ScaleValue);
 	if(CameraComponent->FieldOfView>=AimScaleNormalValue)
 	{
@@ -226,7 +226,7 @@ void ABaseCharacter::AimScaleReduce()
 }
 
 
-FHitResult ABaseCharacter::GetAimResult()
+FHitResult ABaseCharacter::GetAimResult() const
 {
 	const AController* OwnerController=GetController();
 	if(!OwnerController)return {};

@@ -30,6 +30,6 @@ public:
 
 	UPROPERTY(EditAnywhere,Category="VFX")
 	bool PlayVFXByHitRotation=true;
-	void PlayVFXOnHit(const FHitResult& HitResult);
+	void PlayVfxOnHit(const FHitResult& HitResult);
 		
 };

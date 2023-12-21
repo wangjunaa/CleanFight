@@ -33,25 +33,27 @@ TSubclassOf<AWeapon> UWeaponComponent::GetCurrentWeaponClass()
 
 void UWeaponComponent::OnStartFire()
 {
-	if(!GetCurrentWeapon())return;
-	const float FireRate=GetCurrentWeapon()->GetFireRate();
+	if(!GetCurrentWeapon() || bFireInCD)return;
 	check(GetWorld());
-	GetWorld()->GetTimerManager().SetTimer(FireTimerHandle, this, &UWeaponComponent::MakeShoot, FireRate, true, 0);
-	Firing=true;
+	MakeShoot();
 }
-
+ 
 void UWeaponComponent::MakeShoot()
 {
-	 FVector TargetPoint=GetFireTargetPoint(); 
+	UE_LOG(LogWeaponComp,Display,TEXT("开火"));
+	//射击逻辑
+	bFireInCD=true;
+	const FVector TargetPoint=GetFireTargetPoint(); 
 	GetCurrentWeapon()->MakeShoot(TargetPoint);
+	//射击cd
+	const float FireRate=GetCurrentWeapon()->GetFireRate();
+	GetWorld()->GetTimerManager().SetTimer(FireCDTimerHandle, this,&UWeaponComponent::FireCDFinish,FireRate,false,FireRate);
 }
 
 void UWeaponComponent::OnEndFire()
 { 
 	if(!GetCurrentWeapon())return;
-	check(GetWorld());
-	GetWorld()->GetTimerManager().ClearTimer(FireTimerHandle);
-	Firing=false;
+	check(GetWorld()); 
 }
 
 FTransform UWeaponComponent::GetWeaponSocketTransform() const
@@ -61,16 +63,12 @@ FTransform UWeaponComponent::GetWeaponSocketTransform() const
 	return Character->GetMesh()->GetSocketTransform(WeaponSocketName);
 }
 
-FVector UWeaponComponent::GetFireTargetPoint()
+FVector UWeaponComponent::GetFireTargetPoint() const
 { 
 	const ABaseCharacter* Character=Cast<ABaseCharacter>(GetOwner());
-	if(Character->IsAiming())
-	{
+	if(Character->IsAiming()) 
 		return GetAimPoint();
-	}else
-	{
-		return Character->GetActorForwardVector()*1000+Character->GetActorLocation();
-	}
+	return Character->GetActorForwardVector()*FireRange+Character->GetActorLocation();
 }
 
 FVector UWeaponComponent::GetAimPoint() const
@@ -82,7 +80,7 @@ FVector UWeaponComponent::GetAimPoint() const
 	FRotator ViewRotation;
 	OwnerController->GetPlayerViewPoint(ViewLocation,ViewRotation);
  
-	FVector TargetPoint=ViewLocation+ViewRotation.Vector()*1000;
+	FVector TargetPoint=ViewLocation+ViewRotation.Vector()*FireRange;
 
 	FHitResult HitResult;
 	FCollisionQueryParams CollisionQueryParams;
@@ -110,5 +108,6 @@ void UWeaponComponent::SpawnWeapon()
 	UE_LOG(LogWeaponComp,Display,TEXT("生成武器"));
 	CurrentWeapon= GetWorld()->SpawnActor<AWeapon>(GetCurrentWeaponClass(),WeaponTransform);
 	CurrentWeapon->AttachToComponent(Character->GetMesh(),FAttachmentTransformRules(EAttachmentRule::SnapToTarget,false),WeaponSocketName);
+	CurrentWeapon->SetOwner(GetOwner());
 }
 

@@ -33,15 +33,13 @@ public:
 	void OnStartFire();
 	void MakeShoot();
 	void OnEndFire();
-
-	UFUNCTION(Blueprintable)
-	bool IsFiring() const {return Firing;}
+ 
 	
 private:
 	
 	UFUNCTION(Blueprintable,Category="Weapon")
 	FTransform GetWeaponSocketTransform() const;
-	FVector GetFireTargetPoint();
+	FVector GetFireTargetPoint() const;
 	FVector GetAimPoint() const;
 
 	AController* GetOwnerController() const;
@@ -50,10 +48,13 @@ private:
 	UPROPERTY(EditAnywhere,Category="Weapon")
 	TArray<TSubclassOf<AWeapon>> WeaponList;
 
-	FTimerHandle FireTimerHandle;
+	FTimerHandle FireCDTimerHandle;
 	
 	TObjectPtr<AWeapon> CurrentWeapon=nullptr;
 
 	void SpawnWeapon();
-	bool Firing=false;
+	bool bFiring=false;
+	bool bFireInCD=false;
+	void FireCDFinish(){bFireInCD=false;}
+	float FireRange=10000;
 };

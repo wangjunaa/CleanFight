@@ -121,5 +121,5 @@ private:
 	 
 	bool Aiming=false;
 
-	FHitResult GetAimResult();
+	FHitResult GetAimResult() const;
 };

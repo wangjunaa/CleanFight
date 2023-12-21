@@ -14,12 +14,13 @@ AWeapon::AWeapon()
 	WeaponMesh->SetupAttachment(Scene);
 }
  
-void AWeapon::MakeShoot(FVector TargetPoint)
-{ 
-	FVector Location=GetMuzzleLocation();
-	FRotator Rotator=UKismetMathLibrary::FindLookAtRotation(Location,TargetPoint); 
+void AWeapon::MakeShoot(const FVector& TargetPoint) 
+{
+	const FVector Location=GetMuzzleLocation();
+	const FRotator Rotator=UKismetMathLibrary::FindLookAtRotation(Location,TargetPoint); 
 	check(GetWorld());
-	GetWorld()->SpawnActor<AProjectile>(ProjectileClass,Location,Rotator);
+	const auto Projectile= GetWorld()->SpawnActor<AProjectile>(ProjectileClass,Location,Rotator);
+	Projectile->SetOwner(GetOwner());
 }
 
 void AWeapon::BeginPlay()

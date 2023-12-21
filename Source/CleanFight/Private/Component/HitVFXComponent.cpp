@@ -17,7 +17,7 @@ void UHitVFXComponent::BeginPlay()
 	
 }
 
-void UHitVFXComponent::PlayVFXOnHit(const FHitResult& HitResult)
+void UHitVFXComponent::PlayVfxOnHit(const FHitResult& HitResult)
 {
 	if(!DefaultEffect)return;
 	UNiagaraSystem* Effect=DefaultEffect;
