@@ -10,20 +10,21 @@ AWeapon::AWeapon()
 
 	Scene=CreateDefaultSubobject<USceneComponent>("Scene");
 	WeaponMesh=CreateDefaultSubobject<USkeletalMeshComponent>("WeaponMesh");
+
+	WeaponMesh->SetupAttachment(Scene);
 }
  
 void AWeapon::MakeShoot(FVector TargetPoint)
 { 
 	FVector Location=GetMuzzleLocation();
-	FRotator Rotator=UKismetMathLibrary::FindLookAtRotation(Location,TargetPoint);
-	FTransform ProjectileTransform=FTransform(Rotator,Location);
+	FRotator Rotator=UKismetMathLibrary::FindLookAtRotation(Location,TargetPoint); 
 	check(GetWorld());
-	GetWorld()->SpawnActor<AProjectile>(Location,Rotator);
+	GetWorld()->SpawnActor<AProjectile>(ProjectileClass,Location,Rotator);
 }
 
 void AWeapon::BeginPlay()
 {
-	Super::BeginPlay();
+	Super::BeginPlay(); 
 }
  
 

@@ -1,8 +1,7 @@
 #include "Character/BaseCharacter.h"
 
 #include "EnhancedInputComponent.h"
-#include "EnhancedInputSubsystems.h" 
-#include "SoundSubmixDefaultColorPalette.h"
+#include "EnhancedInputSubsystems.h"  
 #include "Camera/CameraComponent.h"
 #include "Component/WeaponComponent.h"
 #include "Components/CapsuleComponent.h"
@@ -98,8 +97,8 @@ void ABaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 		if(FireAction) 
 		{
 			check(WeaponComponent);
-			EnhancedInputComponent->BindAction(AimAction,ETriggerEvent::Started,WeaponComponent.Get(),&UWeaponComponent::OnStartFire);
-			EnhancedInputComponent->BindAction(AimAction,ETriggerEvent::Completed,WeaponComponent.Get(),&UWeaponComponent::OnEndFire);
+			EnhancedInputComponent->BindAction(FireAction,ETriggerEvent::Started,WeaponComponent.Get(),&UWeaponComponent::OnStartFire);
+			EnhancedInputComponent->BindAction(FireAction,ETriggerEvent::Completed,WeaponComponent.Get(),&UWeaponComponent::OnEndFire);
 		}
 	}
 }

@@ -1,10 +1,10 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
-#include "NiagaraSystem.h"
+#include "CoreMinimal.h" 
 #include "GameFramework/Actor.h"
 #include "Weapon.generated.h"
+
 
 class AProjectile;
 
@@ -25,9 +25,8 @@ public:
 	UFUNCTION(Blueprintable,Category="Weapon")
 	void MakeShoot(FVector TargetPoint);
 	
-
 	UPROPERTY(EditAnywhere,Category="Weapon")
-	TObjectPtr<AProjectile> Projectile;
+	TSubclassOf<AProjectile> ProjectileClass;
 protected:
 	virtual void BeginPlay() override;
 

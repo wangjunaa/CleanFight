@@ -2,30 +2,30 @@
 
 #include "Component/WeaponComponent.h"
 
-#include "Character/BaseCharacter.h" 
+#include "Character/BaseCharacter.h"  
 #include "Weapon/Weapon.h"
 
+DEFINE_LOG_CATEGORY_STATIC(LogWeaponComp,All,All);
 UWeaponComponent::UWeaponComponent()
 {
 	PrimaryComponentTick.bCanEverTick = true;
-
 }
 
 
 void UWeaponComponent::BeginPlay()
 {
-	Super::BeginPlay();	
+	Super::BeginPlay();
+	SpawnWeapon();
 }
-
- 
 
 void UWeaponComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-
+	
 }
+ 
 
-AWeapon* UWeaponComponent::GetCurrentWeapon()
+TSubclassOf<AWeapon> UWeaponComponent::GetCurrentWeaponClass()
 {
 	if(WeaponList.Num()==0)return nullptr;
 	return WeaponList[CurrentWeaponIndex];
@@ -34,12 +34,13 @@ AWeapon* UWeaponComponent::GetCurrentWeapon()
 void UWeaponComponent::OnStartFire()
 {
 	if(!GetCurrentWeapon())return;
-	float FireRate=GetCurrentWeapon()->GetFireRate();
+	const float FireRate=GetCurrentWeapon()->GetFireRate();
 	check(GetWorld());
-	GetWorld()->GetTimerManager().SetTimer(FireTimerHandle,this,&UWeaponComponent::MakeShoot,FireRate,true);
+	GetWorld()->GetTimerManager().SetTimer(FireTimerHandle, this, &UWeaponComponent::MakeShoot, FireRate, true, 0);
+	Firing=true;
 }
 
-void UWeaponComponent::MakeShoot()
+void UWeaponComponent::MakeShoot() const
 {
 	FVector TargetPoint;
 	GetAimLine(TargetPoint);
@@ -51,6 +52,7 @@ void UWeaponComponent::OnEndFire()
 	if(!GetCurrentWeapon())return;
 	check(GetWorld());
 	GetWorld()->GetTimerManager().ClearTimer(FireTimerHandle);
+	Firing=false;
 }
 
 FTransform UWeaponComponent::GetWeaponSocketTransform() const
@@ -63,7 +65,7 @@ FTransform UWeaponComponent::GetWeaponSocketTransform() const
 void UWeaponComponent::GetAimLine(FVector& TargetPoint) const
 {
 	const AController* OwnerController=GetOwnerController();
-	if(!OwnerController)return;
+	check(OwnerController);
 
 	FVector ViewLocation;
 	FRotator ViewRotation;
@@ -84,5 +86,17 @@ AController* UWeaponComponent::GetOwnerController() const
 {
 	AController* Controller=Cast<AController>(GetOwner());
 	return Controller;
+}
+
+void UWeaponComponent::SpawnWeapon()
+{
+	if(!GetCurrentWeaponClass())return;
+	const ABaseCharacter* Character=Cast<ABaseCharacter>(GetOwner());
+	const FTransform WeaponTransform= Character->GetMesh()->GetSocketTransform(WeaponSocketName);
+	check(GetWorld());
+
+	UE_LOG(LogWeaponComp,Display,TEXT("生成武器"));
+	CurrentWeapon= GetWorld()->SpawnActor<AWeapon>(GetCurrentWeaponClass(),WeaponTransform);
+	CurrentWeapon->AttachToComponent(Character->GetMesh(),FAttachmentTransformRules(EAttachmentRule::SnapToTarget,false),WeaponSocketName);
 }
 

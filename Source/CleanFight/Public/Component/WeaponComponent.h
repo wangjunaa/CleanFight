@@ -26,11 +26,17 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 	UFUNCTION(Blueprintable,Category="Weapon")
-	AWeapon* GetCurrentWeapon();
- 
+	AWeapon* GetCurrentWeapon() const {return CurrentWeapon;}
+	UFUNCTION(Blueprintable,Category="Weapon")
+	TSubclassOf<AWeapon> GetCurrentWeaponClass();
+	
 	void OnStartFire();
-	void MakeShoot();
+	void MakeShoot() const;
 	void OnEndFire();
+
+	UFUNCTION(Blueprintable)
+	bool IsFiring(){return Firing;}
+	
 private:
 	
 	UFUNCTION(Blueprintable,Category="Weapon")
@@ -41,8 +47,13 @@ private:
 	AController* GetOwnerController() const;
 
 	int CurrentWeaponIndex=0;
-	TArray<TObjectPtr<AWeapon>> WeaponList;
+	UPROPERTY(EditAnywhere,Category="Weapon")
+	TArray<TSubclassOf<AWeapon>> WeaponList;
 
 	FTimerHandle FireTimerHandle;
+	
+	TObjectPtr<AWeapon> CurrentWeapon=nullptr;
 
+	void SpawnWeapon();
+	bool Firing=false;
 };
