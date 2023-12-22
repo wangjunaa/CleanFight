@@ -16,6 +16,7 @@ void UWeaponComponent::BeginPlay()
 {
 	Super::BeginPlay();
 	SpawnWeapon();
+	
 }
 
 void UWeaponComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)

@@ -1,7 +1,9 @@
 
 
 #include "Component/HealthComponent.h"
- 
+
+#include "Character/BaseCharacter.h"
+
 UHealthComponent::UHealthComponent()
 { 
 	PrimaryComponentTick.bCanEverTick = false;
@@ -12,17 +14,17 @@ UHealthComponent::UHealthComponent()
 void UHealthComponent::BeginPlay()
 {
 	Super::BeginPlay(); 
-	if(AActor* Owner=GetOwner()){
-		Owner->OnTakeAnyDamage.AddDynamic(this,&UHealthComponent::OnTakeAnyDamage);
-	}
 	SetHealth(MaxHealth);
+	if(ABaseCharacter* Owner=Cast<ABaseCharacter>(GetOwner())){
+		Owner->OnTakeAnyDamage.AddDynamic(this,&UHealthComponent::OnTakeAnyDamage); 
+	}
 	
 }
 
 void UHealthComponent::SetHealth(float NewHealth)
 { 
 	Health=FMath::Clamp(NewHealth,0,MaxHealth);
-	OnHealthChanged.ExecuteIfBound(Health);
+	OnHealthChanged.Broadcast(Health);
 }
 
 void UHealthComponent::AddHealth(float Amount)
@@ -42,7 +44,7 @@ void UHealthComponent::OnTakeAnyDamage(AActor* DamagedActor, float Damage, const
 	if(Damage<=0 || IsDeath())return; 
 	SetHealth(Health-Damage);
 	if(IsDeath())
-		OnDeath.ExecuteIfBound();
+		OnDeath.Broadcast();
 	else  if(Health<MaxHealth && GetWorld() && AutoHeal)
 	{
 		GetWorld()->GetTimerManager().SetTimer(HealTimerHandle,this,&UHealthComponent::HealUpdate,HealUpdateTime,true,HealDelay);

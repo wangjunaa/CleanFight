@@ -18,17 +18,16 @@ public:
 	UWeaponComponent();
 
 protected:
-	virtual void BeginPlay() override;
-
+	virtual void BeginPlay() override; 
 	UPROPERTY(EditAnywhere,Category="Weapon")
 	FName WeaponSocketName="WeaponSocket";
 
 public:	
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
-	UFUNCTION(Blueprintable,Category="Weapon")
+	UFUNCTION(BlueprintCallable,Category="Weapon")
 	AWeapon* GetCurrentWeapon() const { return CurrentWeapon;	}
-	UFUNCTION(Blueprintable,Category="Weapon")
+	UFUNCTION(BlueprintCallable,Category="Weapon")
 	TSubclassOf<AWeapon> GetCurrentWeaponClass(); 
 	
 	void Fire();

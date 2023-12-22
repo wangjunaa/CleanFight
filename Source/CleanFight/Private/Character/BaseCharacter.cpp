@@ -5,21 +5,25 @@
 #include "Camera/CameraComponent.h"
 #include "Component/HealthComponent.h"
 #include "Component/WeaponComponent.h"
-#include "Components/CapsuleComponent.h"
+#include "Components/CapsuleComponent.h" 
+#include "Engine/DamageEvents.h"
 #include "GameFramework/CharacterMovementComponent.h" 
 #include "GameFramework/SpringArmComponent.h"
-DEFINE_LOG_CATEGORY_STATIC(LogBaseCharacter,All,All)
+#include "Weapon/Weapon.h"
+
+DEFINE_LOG_CATEGORY_STATIC(LogBaseCharacter, All, All)
+
 ABaseCharacter::ABaseCharacter()
 {
 	PrimaryActorTick.bCanEverTick = false;
 	//创建组件
 	CameraComponent=CreateDefaultSubobject<UCameraComponent>("CameraComponent");
 	SpringArmComponent=CreateDefaultSubobject<USpringArmComponent>("SpringArmComponent");
-	WeaponComponent=CreateDefaultSubobject<UWeaponComponent>("WeaponComp");
+	WeaponComponent=CreateDefaultSubobject<UWeaponComponent>("WeaponComp"); 
+	HealthComponent=CreateDefaultSubobject<UHealthComponent>("HealthComp");
 	
 	SpringArmComponent->SetupAttachment(GetRootComponent());
-	CameraComponent->SetupAttachment(SpringArmComponent);
-
+	CameraComponent->SetupAttachment(SpringArmComponent); 
 	
 	//设置
 	GetCapsuleComponent()->SetCapsuleHalfHeight(18);
@@ -30,7 +34,10 @@ ABaseCharacter::ABaseCharacter()
 	GetMesh()->SetRelativeScale3D({2,2,2});
 
 	CameraComponent->SetFieldOfView(AimScaleNormalValue);
-	
+	CameraComponent->SetRelativeScale3D({0.5,0.5,0.5});
+
+	SpringArmComponent->TargetArmLength=80.0;
+	SpringArmComponent->TargetOffset={0,0,30};
 	//设置运动属性
 	if(UCharacterMovementComponent* CharacterMovementComponent=GetCharacterMovement())
 	{
@@ -41,15 +48,17 @@ ABaseCharacter::ABaseCharacter()
 void ABaseCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	BindDelegate();
+	if(HealthComponent)
+	{
+		HealthComponent->OnDeath.AddUObject(this,&ABaseCharacter::OnDeath);
+	}
 }
 
- 
 void ABaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 	//绑定输入到角色控制
-	if(APlayerController* PC = CastChecked<APlayerController>(GetController()))
+	if(const APlayerController* PC = CastChecked<APlayerController>(GetController()))
 	{
 		if(UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PC->GetLocalPlayer()))
 		{
@@ -103,7 +112,6 @@ void ABaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 		}
 	}
 }
- 
 
 void ABaseCharacter::Action_MoveForward(const FInputActionValue& Value)
 {
@@ -188,7 +196,7 @@ void ABaseCharacter::Action_StartAim()
 {
 	check(CameraComponent);
 	check(GetWorld());
-	GetWorldTimerManager().SetTimer(AimScaleTimeHandle, this, &ABaseCharacter::AimScaleAmplifier, AimScaleRate, true);
+	GetWorldTimerManager().SetTimer(AimScaleTimeHandle, this, &ABaseCharacter::AimScaleAmplifier,AimScaleRate, true);
 	GetController()->GetPawn()->bUseControllerRotationYaw=true;
 	bAiming=true;
 }
@@ -201,7 +209,6 @@ void ABaseCharacter::Action_EndAim()
 	GetController()->GetPawn()->bUseControllerRotationYaw=false;
 	bAiming=false;
 }
- 
 
 void ABaseCharacter::AimScaleAmplifier()
 {
@@ -226,7 +233,6 @@ void ABaseCharacter::AimScaleReduce()
 		GetWorldTimerManager().ClearTimer(AimScaleTimeHandle);
 	}
 }
-
 
 FHitResult ABaseCharacter::GetAimResult() const
 {
@@ -255,5 +261,28 @@ void ABaseCharacter::OnFire()
 void ABaseCharacter::OnEndFire()
 {
 	bIsFiring=false;
+}
+
+void ABaseCharacter::OnDeath() 
+{
+	//停止控制
+	GetCharacterMovement()->DisableMovement();  
+	if (Controller)
+	{
+		//转移旁观者
+		Controller->ChangeState(NAME_Spectating);
+	}
+	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision); 
+	//启动物理模拟
+	if(GetMesh())
+	{
+		GetMesh()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		GetMesh()->SetSimulatePhysics(true);
+	}
+	if(WeaponComponent)
+	{
+		WeaponComponent->GetCurrentWeapon()->SetLifeSpan(5);
+	}
+	SetLifeSpan(5);
 }
  

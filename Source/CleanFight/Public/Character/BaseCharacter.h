@@ -5,6 +5,8 @@
 #include "GameFramework/Character.h"  
 #include "EnhancedInputSubsystems.h"  
 #include "BaseCharacter.generated.h"
+class UHealthComponent;
+class UWidgetComponent;
 class UWeaponComponent;
 class USpringArmComponent;
 class UCameraComponent;
@@ -17,16 +19,18 @@ class CLEANFIGHT_API ABaseCharacter : public ACharacter
 public:
 	ABaseCharacter();
 	
-protected:
-	virtual void BeginPlay() override;
-
 	//基础组件
 	UPROPERTY(VisibleAnywhere,Category="Comp")
 	TObjectPtr<UCameraComponent> CameraComponent;
 	UPROPERTY(VisibleAnywhere,Category="Comp")
 	TObjectPtr<USpringArmComponent> SpringArmComponent;
 	UPROPERTY(VisibleAnywhere,Category="Comp")
-	TObjectPtr<UWeaponComponent> WeaponComponent;
+	TObjectPtr<UWeaponComponent> WeaponComponent;  
+	UPROPERTY(VisibleAnywhere,Category="Comp")
+	TObjectPtr<UHealthComponent> HealthComponent;
+	
+protected:
+	virtual void BeginPlay() override;
 	
 	//增强输入
 	UPROPERTY(EditAnywhere,Category="Input")
@@ -49,8 +53,7 @@ protected:
 	TObjectPtr<UInputAction> AimAction;
 	UPROPERTY(EditAnywhere,Category="Input")
 	TObjectPtr<UInputAction> FireAction;
-
-	virtual void BindDelegate(); 
+	 
 public:	 
 
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
@@ -122,7 +125,13 @@ private:
 	void AimScaleReduce();
 	FHitResult GetAimResult() const;
 
+	UFUNCTION(BlueprintCallable)
 	void OnFire();
 	void OnEndFire();
 	bool bIsFiring=false;
+
+	UFUNCTION()
+	void OnDeath() ;
+
+	
 };

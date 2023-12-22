@@ -4,8 +4,8 @@
 #include "Components/ActorComponent.h"
 #include "HealthComponent.generated.h"
 
-DECLARE_DELEGATE(FOnDeath)
-DECLARE_DELEGATE_OneParam(FOnHealthChanged,int)
+DECLARE_MULTICAST_DELEGATE(FOnDeath)
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnHealthChanged,int)
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class CLEANFIGHT_API UHealthComponent : public UActorComponent
@@ -20,13 +20,13 @@ public:
 	UFUNCTION(BlueprintCallable,Category="Health")
 	float GetHealth()const{return Health;}
 	UFUNCTION(BlueprintCallable,Category="Health")
+	float GetHealthPercent() const;
+	UFUNCTION(BlueprintCallable,Category="Health")
 	bool IsDeath() const {return FMath::IsNearlyZero(Health);} 
 	UFUNCTION(BlueprintCallable,Category="Health")
 	void SetHealth(float NewHealth);
 	UFUNCTION(BlueprintCallable,Category="Health")
 	void AddHealth(float Amount);
-	UFUNCTION(Blueprintable)
-	float GetHealthPercent() const;
 
 	FOnDeath OnDeath;
 	FOnHealthChanged OnHealthChanged;
@@ -46,7 +46,7 @@ private:
 	UPROPERTY(EditAnywhere,Category="Health|Heal",meta=(EditCondition="AutoHeal"))
 	float HealDelay=3;
 
-	
+	UFUNCTION()//CNM委托记得加这个
 	void OnTakeAnyDamage( AActor* DamagedActor, float Damage, const  UDamageType* DamageType,  AController* InstigatedBy, AActor* DamageCauser);
 	
 	void HealUpdate();

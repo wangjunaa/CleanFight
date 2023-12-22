@@ -17,6 +17,9 @@ AProjectile::AProjectile()
 	CollisionComp=CreateDefaultSubobject<USphereComponent>("CollisionComp");
 	ProjectileMovement=CreateDefaultSubobject<UProjectileMovementComponent>("ProjectileMovement");
 	HitVfxComp=CreateDefaultSubobject<UHitVFXComponent>("HitVfxComp");
+
+	CollisionComp->SetCollisionResponseToAllChannels(ECR_Block); 
+	CollisionComp->bReturnMaterialOnMove=true;
 	
 	SetRootComponent(CollisionComp);
 	
@@ -33,20 +36,16 @@ void AProjectile::OnProjectileHit(UPrimitiveComponent* HitComponent, AActor* Oth
 {
 	if(Hit.bBlockingHit)
 	{
-		UE_LOG(LogProjectile,Display,TEXT("%s 射出子弹命中 %s"),*GetOwner()->GetName(),*Hit.GetActor()->GetName());
-		Hit.GetActor()->TakeDamage(ProjectileDamage, FDamageEvent(), nullptr, GetOwner());
+		UE_LOG(LogProjectile,Display,TEXT("%s 射出子弹命中 %s"),*GetOwner()->GetName(),*Hit.GetActor()->GetName()); 
 		if(bExplore)
 		{
 			Explore();
 		}
 		else
 		{
-			HitVfxComp->PlayVfxOnHit(Hit);
-			//造成伤害
-			if(const ABaseCharacter* Character=Cast<ABaseCharacter>(GetOwner()))
-			{
-				Hit.GetActor()->TakeDamage(ProjectileDamage,FDamageEvent(),Character->GetController(),this);
-			}
+			HitVfxComp->PlayVfxOnHit(Hit); 
+			Hit.GetActor()->TakeDamage(ProjectileDamage,FDamageEvent(),nullptr,GetOwner());
+
 		}
 	}
 	Destroy();
