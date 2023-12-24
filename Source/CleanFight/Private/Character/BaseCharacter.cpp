@@ -3,6 +3,7 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"  
 #include "Camera/CameraComponent.h"
+#include "Character/AIPlayerController.h"
 #include "Component/HealthComponent.h"
 #include "Component/WeaponComponent.h"
 #include "Components/CapsuleComponent.h" 
@@ -107,12 +108,18 @@ void ABaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 		if(FireAction) 
 		{
 			check(WeaponComponent);
-			EnhancedInputComponent->BindAction(FireAction,ETriggerEvent::Triggered,this,&ABaseCharacter::OnFire);
-			EnhancedInputComponent->BindAction(FireAction,ETriggerEvent::Completed,this,&ABaseCharacter::OnEndFire);
+			EnhancedInputComponent->BindAction(FireAction,ETriggerEvent::Triggered,this,&ABaseCharacter::Action_OnFire);
+			EnhancedInputComponent->BindAction(FireAction,ETriggerEvent::Completed,this,&ABaseCharacter::Action_OnEndFire);
 		}
 	}
 }
 
+bool ABaseCharacter::IsDeath() const
+{
+	if(!HealthComponent)return false;
+	return HealthComponent->IsDeath();
+}
+ 
 void ABaseCharacter::Action_MoveForward(const FInputActionValue& Value)
 {
 	if(!Can_Move())return; 
@@ -251,14 +258,14 @@ FHitResult ABaseCharacter::GetAimResult() const
 	return HitResult;
 }
 
-void ABaseCharacter::OnFire()
+void ABaseCharacter::Action_OnFire()
 {
 	if(!WeaponComponent)return;
 	WeaponComponent->Fire();
 	bIsFiring=true;
 }
 
-void ABaseCharacter::OnEndFire()
+void ABaseCharacter::Action_OnEndFire()
 {
 	bIsFiring=false;
 }
@@ -271,6 +278,7 @@ void ABaseCharacter::OnDeath()
 	{
 		//转移旁观者
 		Controller->ChangeState(NAME_Spectating);
+		// if(AAIPlayerController* AIController=Cast<AAIPlayerController>(Controller) ) 
 	}
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision); 
 	//启动物理模拟

@@ -53,35 +53,7 @@ protected:
 	TObjectPtr<UInputAction> AimAction;
 	UPROPERTY(EditAnywhere,Category="Input")
 	TObjectPtr<UInputAction> FireAction;
-	 
-public:	 
 
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
- 
-	UFUNCTION(BlueprintCallable,Category="Movement")
-	bool IsRunning() const {return bRunning;} 
-	UFUNCTION(BlueprintCallable,Category="State")
-	bool IsStiff() const {return bStiffness;} 
-	UFUNCTION(BlueprintCallable,Category="State")
-	bool IsCrouch() const{return bCrouch;}
-	UFUNCTION(BlueprintCallable,Category="State")
-	bool IsAiming() const{return bAiming;} 
-	UFUNCTION(BlueprintCallable,Category="State")
-	bool IsFiring() const{return bIsFiring;};
-	//硬直
-	UFUNCTION(BlueprintCallable,Category="State")
-	void StartStiffness() {bStiffness=true;} 
-	UFUNCTION(BlueprintCallable,Category="State")
-	void EndStiffness() {bStiffness=false;} 
-	
-	UFUNCTION(BlueprintCallable,Category="Movement")
-	bool Can_Move() const {return !IsStiff();}
-	UFUNCTION(BlueprintCallable,Category="Movement")
-	bool Can_Run() const {return !IsStiff() ;}
-	UFUNCTION(BlueprintCallable,Category="Movement")
-	bool Can_Jump() const {return !IsStiff() && !bAiming;};
-
-private:
 	UPROPERTY(EditAnywhere,Category="Movement")
 	float CrouchSpeed=60;
 	UPROPERTY(EditAnywhere,Category="Movement")
@@ -108,7 +80,8 @@ private:
 	void Action_EndCrouch();
 	void Action_StartAim();
 	void Action_EndAim(); 
-
+	void Action_OnFire();
+	void Action_OnEndFire();
 	//调用计时器的速率
 	const float AimScaleRate=0.01;
 	//瞄准平滑放大时间
@@ -124,14 +97,47 @@ private:
 	//视角缩小
 	void AimScaleReduce();
 	FHitResult GetAimResult() const;
-
-	UFUNCTION(BlueprintCallable)
-	void OnFire();
-	void OnEndFire();
+ 
 	bool bIsFiring=false;
 
 	UFUNCTION()
 	void OnDeath() ;
 
+	UPROPERTY(EditAnywhere,Category="Team")
+	FName MyTeamName="Player";
+public:	 
+
+	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+ 
+	UFUNCTION(BlueprintCallable,Category="Movement")
+	bool IsRunning() const {return bRunning;} 
+	UFUNCTION(BlueprintCallable,Category="State")
+	bool IsStiff() const {return bStiffness;} 
+	UFUNCTION(BlueprintCallable,Category="State")
+	bool IsCrouch() const{return bCrouch;}
+	UFUNCTION(BlueprintCallable,Category="State")
+	bool IsAiming() const{return bAiming;} 
+	UFUNCTION(BlueprintCallable,Category="State")
+	bool IsFiring() const{return bIsFiring;};
+	UFUNCTION(BlueprintCallable,Category="State")
+	bool IsDeath() const;
+	//硬直
+	UFUNCTION(BlueprintCallable,Category="State")
+	void StartStiffness() {bStiffness=true;} 
+	UFUNCTION(BlueprintCallable,Category="State")
+	void EndStiffness() {bStiffness=false;} 
+	
+	UFUNCTION(BlueprintCallable,Category="Movement")
+	bool Can_Move() const {return !IsStiff();}
+	UFUNCTION(BlueprintCallable,Category="Movement")
+	bool Can_Run() const {return !IsStiff() ;}
+	UFUNCTION(BlueprintCallable,Category="Movement")
+	bool Can_Jump() const {return !IsStiff() && !bAiming;};
+
+	UFUNCTION(BlueprintCallable,Category="Team")
+	FName GetTeamName(){return MyTeamName;} 
+	UFUNCTION(BlueprintCallable,Category="Team")
+	bool IsTeamMate(FName TeamName){return TeamName==MyTeamName;}
+	 
 	
 };
