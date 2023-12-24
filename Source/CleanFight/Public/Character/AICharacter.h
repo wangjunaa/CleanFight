@@ -14,4 +14,6 @@ public:
 
 	void Fire();
 	void Aiming();
+	void EndAiming();
+	virtual void OnDeath() override;
 };

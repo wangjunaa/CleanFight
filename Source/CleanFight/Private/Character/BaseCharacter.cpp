@@ -277,16 +277,17 @@ void ABaseCharacter::OnDeath()
 	if (Controller)
 	{
 		//转移旁观者
-		Controller->ChangeState(NAME_Spectating);
-		// if(AAIPlayerController* AIController=Cast<AAIPlayerController>(Controller) ) 
+		Controller->ChangeState(NAME_Spectating); 
 	}
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision); 
 	//启动物理模拟
 	if(GetMesh())
-	{
-		GetMesh()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-		GetMesh()->SetSimulatePhysics(true);
+	{ 
+		GetMesh()->SetAllBodiesSimulatePhysics(true);
+		GetMesh()->SetAllBodiesPhysicsBlendWeight(1);
+		GetMesh()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);		
 	}
+	
 	if(WeaponComponent)
 	{
 		WeaponComponent->GetCurrentWeapon()->SetLifeSpan(5);

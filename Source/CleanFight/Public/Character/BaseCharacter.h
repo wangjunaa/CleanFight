@@ -101,7 +101,7 @@ protected:
 	bool bIsFiring=false;
 
 	UFUNCTION()
-	void OnDeath() ;
+	virtual void OnDeath() ;
 
 	UPROPERTY(EditAnywhere,Category="Team")
 	FName MyTeamName="Player";

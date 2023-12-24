@@ -34,7 +34,6 @@ AActor* AAIPlayerController::GetClosestEnemy() const
 	{
 		//判断角色是否死亡或队友
 		ABaseCharacter* BaseCharacter=Cast<ABaseCharacter>(Actor);
-		UE_LOG(LogAiPlayerController,Display,TEXT("%s"),*BaseCharacter->GetName());
 		if(BaseCharacter && !BaseCharacter->IsTeamMate(OwnerCharacter->GetTeamName()) && !BaseCharacter->IsDeath())
 		{
 			const float Dis=(OwnerCharacter->GetActorLocation()-BaseCharacter->GetActorLocation()).Size();
