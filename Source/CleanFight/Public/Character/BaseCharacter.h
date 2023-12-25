@@ -5,6 +5,7 @@
 #include "GameFramework/Character.h"  
 #include "EnhancedInputSubsystems.h"  
 #include "BaseCharacter.generated.h"
+class UPlayerStateComponent;
 class UHealthComponent;
 class UWidgetComponent;
 class UWeaponComponent;
@@ -28,6 +29,8 @@ public:
 	TObjectPtr<UWeaponComponent> WeaponComponent;  
 	UPROPERTY(VisibleAnywhere,Category="Comp")
 	TObjectPtr<UHealthComponent> HealthComponent;
+	UPROPERTY(VisibleAnywhere,Category="Comp")
+	TObjectPtr<UPlayerStateComponent> PlayerStatComponent;
 	
 protected:
 	virtual void BeginPlay() override;

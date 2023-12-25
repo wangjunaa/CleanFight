@@ -2,12 +2,11 @@
 
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"  
-#include "Camera/CameraComponent.h"
-#include "Character/AIPlayerController.h"
+#include "Camera/CameraComponent.h" 
 #include "Component/HealthComponent.h"
+#include "..\..\Public\Component\PlayerStateComponent.h"
 #include "Component/WeaponComponent.h"
-#include "Components/CapsuleComponent.h" 
-#include "Engine/DamageEvents.h"
+#include "Components/CapsuleComponent.h"  
 #include "GameFramework/CharacterMovementComponent.h" 
 #include "GameFramework/SpringArmComponent.h"
 #include "Weapon/Weapon.h"
@@ -22,6 +21,7 @@ ABaseCharacter::ABaseCharacter()
 	SpringArmComponent=CreateDefaultSubobject<USpringArmComponent>("SpringArmComponent");
 	WeaponComponent=CreateDefaultSubobject<UWeaponComponent>("WeaponComp"); 
 	HealthComponent=CreateDefaultSubobject<UHealthComponent>("HealthComp");
+	PlayerStatComponent=CreateDefaultSubobject<UPlayerStateComponent>("PlayerStateComp");
 	
 	SpringArmComponent->SetupAttachment(GetRootComponent());
 	CameraComponent->SetupAttachment(SpringArmComponent); 

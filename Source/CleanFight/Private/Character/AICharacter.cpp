@@ -6,6 +6,7 @@
 
 AAICharacter::AAICharacter()
 {
+	
 }
 
 void AAICharacter::Fire() 
@@ -32,4 +33,4 @@ void AAICharacter::OnDeath()
 	}
 }
  
- 
+  
