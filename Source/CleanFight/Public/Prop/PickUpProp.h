@@ -2,17 +2,17 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "PlayerStateProp.generated.h"
+#include "PickUpProp.generated.h"
 
 class UCapsuleComponent;
 
 UCLASS()
-class CLEANFIGHT_API APlayerStateProp : public AActor
+class CLEANFIGHT_API APickUpProp : public AActor
 {
 	GENERATED_BODY()
 	
 public:	
-	APlayerStateProp();  
+	APickUpProp();  
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<UCapsuleComponent> CollisionComp;
 	

@@ -4,7 +4,7 @@
 #include "EnhancedInputSubsystems.h"  
 #include "Camera/CameraComponent.h" 
 #include "Component/HealthComponent.h"
-#include "..\..\Public\Component\PlayerStateComponent.h"
+#include "Component/PlayerStateComponent.h" 
 #include "Component/WeaponComponent.h"
 #include "Components/CapsuleComponent.h"  
 #include "GameFramework/CharacterMovementComponent.h" 
@@ -52,7 +52,7 @@ void ABaseCharacter::BeginPlay()
 	if(HealthComponent)
 	{
 		HealthComponent->OnDeath.AddUObject(this,&ABaseCharacter::OnDeath);
-	}
+	} 
 }
 
 void ABaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)

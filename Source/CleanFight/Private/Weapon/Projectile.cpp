@@ -2,8 +2,7 @@
 
 #include "Weapon/Projectile.h"
 
-#include "NiagaraFunctionLibrary.h"
-#include "Character/BaseCharacter.h"
+#include "NiagaraFunctionLibrary.h" 
 #include "Component/HitVFXComponent.h"
 #include "Components/SphereComponent.h"
 #include "Engine/DamageEvents.h"
@@ -45,7 +44,6 @@ void AProjectile::OnProjectileHit(UPrimitiveComponent* HitComponent, AActor* Oth
 		{
 			HitVfxComp->PlayVfxOnHit(Hit); 
 			Hit.GetActor()->TakeDamage(ProjectileDamage,FDamageEvent(),nullptr,GetOwner());
-
 		}
 	}
 	Destroy();

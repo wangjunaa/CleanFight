@@ -1,10 +1,10 @@
 
 
-#include "Prop/PlayerStateProp.h"
+#include "Prop/PickUpProp.h"
 
 #include "Components/CapsuleComponent.h"
 
-APlayerStateProp::APlayerStateProp()
+APickUpProp::APickUpProp()
 {
 	PrimaryActorTick.bCanEverTick = false;
 	CollisionComp = CreateDefaultSubobject<UCapsuleComponent>("CollisionComp");
@@ -12,7 +12,7 @@ APlayerStateProp::APlayerStateProp()
 
 }
 
-void APlayerStateProp::BeginPlay()
+void APickUpProp::BeginPlay()
 {
 	Super::BeginPlay();
 	
