@@ -6,8 +6,7 @@
 #include "Weapon.generated.h"
 
 
-class AProjectile;
-
+class AProjectile; 
 UCLASS()
 class CLEANFIGHT_API AWeapon : public AActor
 {
@@ -27,6 +26,9 @@ public:
 	
 	UPROPERTY(EditAnywhere,Category="Weapon")
 	TSubclassOf<AProjectile> ProjectileClass;
+	
+	UPROPERTY(EditDefaultsOnly,Category	="UI")
+	TObjectPtr<UMaterial> WeaponIcon;
 protected:
 	virtual void BeginPlay() override;
 
@@ -42,6 +44,4 @@ private:
 	UPROPERTY(VisibleAnywhere,Category="Weapon")
 	float FireRate=0.3;
 
-	UPROPERTY(EditDefaultsOnly,Category	="UI")
-	UTexture2D* WeaponIcon=nullptr;
 };

@@ -28,8 +28,9 @@ public:
 	UFUNCTION(BlueprintCallable,Category="Weapon")
 	AWeapon* GetCurrentWeapon() const { return CurrentWeapon;	}
 	UFUNCTION(BlueprintCallable,Category="Weapon")
-	TSubclassOf<AWeapon> GetCurrentWeaponClass(); 
-	
+	TSubclassOf<AWeapon> GetCurrentWeaponClass();  
+	UFUNCTION(BlueprintCallable,Category="Weapon")
+	UMaterial* GetCurrentWeaponIcon() ; 
 	void Fire();
 	void MakeShoot(); 
   
@@ -55,4 +56,5 @@ private:
 	bool bFireInCD=false;
 	void FireCDFinish(){bFireInCD=false;}
 	float FireRange=10000;
+	int MaxWeaponNumber=4;
 };

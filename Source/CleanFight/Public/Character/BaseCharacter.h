@@ -31,7 +31,7 @@ public:
 	TObjectPtr<UHealthComponent> HealthComponent;
 	UPROPERTY(VisibleAnywhere,Category="Comp")
 	TObjectPtr<UPlayerStateComponent> PlayerStatComponent;
-  
+ 
 protected:
 	virtual void BeginPlay() override;
 	

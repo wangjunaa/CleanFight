@@ -3,7 +3,7 @@
 #include "Component/WeaponComponent.h"
 
 #include "Character/BaseCharacter.h"
-#include "Weapon/Weapon.h"
+#include "Weapon/Weapon.h" 
 
 DEFINE_LOG_CATEGORY_STATIC(LogWeaponComp,All,All);
 UWeaponComponent::UWeaponComponent()
@@ -30,6 +30,15 @@ TSubclassOf<AWeapon> UWeaponComponent::GetCurrentWeaponClass()
 {
 	if(WeaponList.Num()==0)return nullptr;
 	return WeaponList[CurrentWeaponIndex];
+}
+
+UMaterial* UWeaponComponent::GetCurrentWeaponIcon()
+{
+	if(GetCurrentWeapon())
+	{
+		return GetCurrentWeapon()->WeaponIcon;
+	}
+	return nullptr;
 }
 
 void UWeaponComponent::Fire()
