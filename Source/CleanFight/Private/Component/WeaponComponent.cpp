@@ -24,19 +24,24 @@ void UWeaponComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActo
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 	
 }
- 
 
-TSubclassOf<AWeapon> UWeaponComponent::GetCurrentWeaponClass()
+AWeapon* UWeaponComponent::GetCurrentWeapon() const
 {
-	if(WeaponList.Num()==0)return nullptr;
+	if(CurrentWeaponIndex>=WeaponList.Num())return nullptr;
 	return WeaponList[CurrentWeaponIndex];
 }
 
-UMaterial* UWeaponComponent::GetCurrentWeaponIcon()
+TArray<AWeapon*> UWeaponComponent::GetWeaponList() const
+{
+	return WeaponList;
+}
+
+
+UMaterial* UWeaponComponent::GetCurrentWeaponIcon() const
 {
 	if(GetCurrentWeapon())
 	{
-		return GetCurrentWeapon()->WeaponIcon;
+		return GetCurrentWeapon()->GetIcon();
 	}
 	return nullptr;
 }
@@ -105,14 +110,23 @@ AController* UWeaponComponent::GetOwnerController() const
 
 void UWeaponComponent::SpawnWeapon()
 {
-	if(!GetCurrentWeaponClass())return;
+	if(DefaultWeaponClassList.Num()==0)return;
 	const ABaseCharacter* Character=Cast<ABaseCharacter>(GetOwner());
 	const FTransform WeaponTransform= Character->GetMesh()->GetSocketTransform(WeaponSocketName);
 	check(GetWorld());
 
 	UE_LOG(LogWeaponComp,Display,TEXT("生成武器"));
-	CurrentWeapon= GetWorld()->SpawnActor<AWeapon>(GetCurrentWeaponClass(),WeaponTransform);
-	CurrentWeapon->AttachToComponent(Character->GetMesh(),FAttachmentTransformRules(EAttachmentRule::SnapToTarget,false),WeaponSocketName);
-	CurrentWeapon->SetOwner(GetOwner());
+	for (auto Element : DefaultWeaponClassList)
+	{ 
+		AWeapon* Weapon= GetWorld()->SpawnActor<AWeapon>(Element,WeaponTransform); 
+		Weapon->AttachToComponent(Character->GetMesh(),FAttachmentTransformRules(EAttachmentRule::SnapToTarget,false),WeaponSocketName);
+		Weapon->SetOwner(GetOwner());
+		Weapon->SetVisibility(false); 
+		WeaponList.Add(Weapon);
+	}
+	if(GetCurrentWeapon())
+	{
+		GetCurrentWeapon()->SetVisibility(true);
+	}
 }
 

@@ -21,15 +21,15 @@ public:
 	ABaseCharacter();
 	
 	//基础组件
-	UPROPERTY(VisibleAnywhere,Category="Comp")
+	UPROPERTY(EditAnywhere,Category="Comp")
 	TObjectPtr<UCameraComponent> CameraComponent;
-	UPROPERTY(VisibleAnywhere,Category="Comp")
+	UPROPERTY(EditAnywhere,Category="Comp")
 	TObjectPtr<USpringArmComponent> SpringArmComponent;
-	UPROPERTY(VisibleAnywhere,Category="Comp")
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Comp")
 	TObjectPtr<UWeaponComponent> WeaponComponent;  
-	UPROPERTY(VisibleAnywhere,Category="Comp")
+	UPROPERTY(EditAnywhere,Category="Comp")
 	TObjectPtr<UHealthComponent> HealthComponent;
-	UPROPERTY(VisibleAnywhere,Category="Comp")
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Comp")
 	TObjectPtr<UPlayerStateComponent> PlayerStatComponent;
  
 protected:
@@ -133,14 +133,21 @@ public:
 	UFUNCTION(BlueprintCallable,Category="Movement")
 	bool Can_Move() const {return !IsStiff();}
 	UFUNCTION(BlueprintCallable,Category="Movement")
-	bool Can_Run() const {return !IsStiff() ;}
+	bool Can_Run() const {return !IsStiff()&&!bCrouch ;}
 	UFUNCTION(BlueprintCallable,Category="Movement")
-	bool Can_Jump() const {return !IsStiff() && !bAiming;};
+	bool Can_Jump() const {return !IsStiff() && !bAiming && !bCrouch;};
 
 	UFUNCTION(BlueprintCallable,Category="Team")
 	FName GetTeamName(){return MyTeamName;} 
 	UFUNCTION(BlueprintCallable,Category="Team")
 	bool IsTeamMate(FName TeamName){return TeamName==MyTeamName;}
-	 
+
+	UFUNCTION(BlueprintCallable,Category="Experience")
+	void AddExperience(int Amount);
+private:
 	
+	int ExperienceValue=0;
+	int Level=0;
+	int GetMaxExperience() const;
+	int UpgradeNum=0;
 };

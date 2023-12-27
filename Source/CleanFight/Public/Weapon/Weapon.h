@@ -6,6 +6,7 @@
 #include "Weapon.generated.h"
 
 
+class AWeaponModule;
 class AProjectile; 
 UCLASS()
 class CLEANFIGHT_API AWeapon : public AActor
@@ -15,20 +16,38 @@ class CLEANFIGHT_API AWeapon : public AActor
 public:	
 	AWeapon();
 
-	UFUNCTION(Blueprintable,Category="Weapon")
+	UFUNCTION(BlueprintCallable,Category="Weapon")
 	FVector GetMuzzleLocation() const;
 	
-	UFUNCTION(Blueprintable,Category="Weapon")
+	UFUNCTION(BlueprintCallable,Category="Weapon")
 	float GetFireRate() const {return FireRate;}
 
-	UFUNCTION(Blueprintable,Category="Weapon")
+	UFUNCTION(BlueprintCallable,Category="Weapon")
 	void MakeShoot(const FVector& TargetPoint) const;
 	
-	UPROPERTY(EditAnywhere,Category="Weapon")
-	TSubclassOf<AProjectile> ProjectileClass;
+	UFUNCTION(BlueprintCallable,Category="Weapon")
+	int GetMaxModuleNumber() const;
+	UFUNCTION(BlueprintCallable,Category="UI")
+	UMaterial* GetIcon() const;
+
+	UFUNCTION(BlueprintCallable,Category="Weapon")
+	TArray<AWeaponModule*> GetWeaponModules() const;
 	
-	UPROPERTY(EditDefaultsOnly,Category	="UI")
-	TObjectPtr<UMaterial> WeaponIcon;
+	UFUNCTION(BlueprintCallable,Category="Weapon")
+	bool AddModule(AWeaponModule* Module);
+
+	UFUNCTION(BlueprintCallable,Category="Weapon")
+	bool RemoveModule(int Index);
+	
+	UFUNCTION(BlueprintCallable,Category="Module")
+	void AddProjectileDamage(float Amount){ProjectileDamageOffset+=Amount;};
+	UFUNCTION(BlueprintCallable,Category="Module")
+	void AddProjectileSpeed(float Amount){ProjectileSpeedOffset+=Amount;};
+	UFUNCTION(BlueprintCallable,Category="Module")
+	void AddProjectileScale(float Amount){ProjectileScaleOffset+=Amount;};
+	
+	UFUNCTION(BlueprintCallable,Category="Module")
+	void SetVisibility(bool Flag) const {WeaponMesh->SetVisibility(Flag);}; 
 protected:
 	virtual void BeginPlay() override;
 
@@ -43,5 +62,17 @@ protected:
 private: 
 	UPROPERTY(VisibleAnywhere,Category="Weapon")
 	float FireRate=0.3;
-
+	UPROPERTY(EditAnywhere,Category="Weapon")
+	int MaxModuleNumber=5;
+	UPROPERTY(EditAnywhere,Category="Weapon")
+	TArray<AWeaponModule*>WeaponModules;
+	float ProjectileScaleOffset=1;
+	float ProjectileSpeedOffset=0;
+	float ProjectileDamageOffset=0;
+	
+	UPROPERTY(EditAnywhere,Category="Weapon")
+	TSubclassOf<AProjectile> ProjectileClass;
+	
+	UPROPERTY(EditDefaultsOnly,Category	="UI")
+	TObjectPtr<UMaterial> WeaponIcon;
 };

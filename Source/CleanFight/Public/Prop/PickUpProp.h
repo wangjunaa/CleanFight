@@ -13,14 +13,16 @@ class CLEANFIGHT_API APickUpProp : public AActor
 	
 public:	
 	APickUpProp();  
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere,Category="Comp")
 	TObjectPtr<UCapsuleComponent> CollisionComp;
+	UFUNCTION(BlueprintCallable,Category="UI")
+	UTexture2D* GetIcon()const{return Icon;}
 	
-	UPROPERTY(VisibleAnywhere)
-	TObjectPtr<UTexture2D> Icon;
 protected:
 	virtual void BeginPlay() override;
  
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<UTexture2D> Icon;
 public:
 	
 };

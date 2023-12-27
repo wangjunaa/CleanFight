@@ -26,17 +26,15 @@ public:
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 	UFUNCTION(BlueprintCallable,Category="Weapon")
-	AWeapon* GetCurrentWeapon() const { return CurrentWeapon;	}
+	AWeapon* GetCurrentWeapon() const; 
 	UFUNCTION(BlueprintCallable,Category="Weapon")
-	TSubclassOf<AWeapon> GetCurrentWeaponClass();  
+	TArray<AWeapon*> GetWeaponList() const; 
 	UFUNCTION(BlueprintCallable,Category="Weapon")
-	UMaterial* GetCurrentWeaponIcon() ; 
+	UMaterial* GetCurrentWeaponIcon() const; 
 	void Fire();
 	void MakeShoot(); 
   
 private:
-	// UPROPERTY(EditAnywhere,Category="Montage")
-	// TObjectPtr<UAnimMontage>FireMontage;
 	
 	FTransform GetWeaponSocketTransform() const;
 	FVector GetFireTargetPoint() const;
@@ -46,12 +44,12 @@ private:
 
 	int CurrentWeaponIndex=0;
 	UPROPERTY(EditAnywhere,Category="Weapon")
-	TArray<TSubclassOf<AWeapon>> WeaponList;
+	TArray<TSubclassOf<AWeapon>> DefaultWeaponClassList;
+	
+	TArray<AWeapon*> WeaponList;
+	 
 
 	FTimerHandle FireCDTimerHandle;
-	
-	TObjectPtr<AWeapon> CurrentWeapon=nullptr;
-
 	void SpawnWeapon(); 
 	bool bFireInCD=false;
 	void FireCDFinish(){bFireInCD=false;}

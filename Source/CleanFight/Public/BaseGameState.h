@@ -14,6 +14,11 @@ public:
 	virtual void Tick(float DeltaSeconds) override;
 	UFUNCTION(BlueprintCallable)
 	FText GetPlayTime();
+	UFUNCTION(BlueprintCallable)
+	int GetDifficultLevel() const;
+	UFUNCTION(BlueprintCallable)
+	FString GetDifficultText()const;
 private:
 	float PlayTime=0;
+	int DifficultLevel=0;
 };

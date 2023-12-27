@@ -27,18 +27,27 @@ ABaseCharacter::ABaseCharacter()
 	CameraComponent->SetupAttachment(SpringArmComponent); 
 	
 	//设置
-	GetCapsuleComponent()->SetCapsuleHalfHeight(18);
-	GetCapsuleComponent()->SetCapsuleRadius(8);
-	
-	GetMesh()->SetRelativeLocation({0,0,-10});
-	GetMesh()->SetRelativeRotation({0,-90,0});
-	GetMesh()->SetRelativeScale3D({2,2,2});
-
-	CameraComponent->SetFieldOfView(AimScaleNormalValue);
-	CameraComponent->SetRelativeScale3D({0.5,0.5,0.5});
-
-	SpringArmComponent->TargetArmLength=80.0;
-	SpringArmComponent->TargetOffset={0,0,30};
+	if(GetCapsuleComponent())
+	{ 
+		GetCapsuleComponent()->SetCapsuleHalfHeight(18);
+		GetCapsuleComponent()->SetCapsuleRadius(8);
+	}
+	if(GetMesh())
+	{ 
+		GetMesh()->SetRelativeLocation({0,0,-10});
+		GetMesh()->SetRelativeRotation({0,-90,0});
+		GetMesh()->SetRelativeScale3D({2,2,2});
+	}
+	if(CameraComponent)
+	{ 
+		CameraComponent->SetFieldOfView(AimScaleNormalValue);
+		CameraComponent->SetRelativeScale3D({0.5,0.5,0.5});
+	}
+	if(SpringArmComponent)
+	{ 
+		SpringArmComponent->TargetArmLength=80.0;
+		SpringArmComponent->TargetOffset={0,0,30};
+	}
 	//设置运动属性
 	if(UCharacterMovementComponent* CharacterMovementComponent=GetCharacterMovement())
 	{
@@ -106,8 +115,7 @@ void ABaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 			EnhancedInputComponent->BindAction(AimAction,ETriggerEvent::Completed,this,&ABaseCharacter::Action_EndAim);
 		}
 		if(FireAction) 
-		{
-			check(WeaponComponent);
+		{ 
 			EnhancedInputComponent->BindAction(FireAction,ETriggerEvent::Triggered,this,&ABaseCharacter::Action_OnFire);
 			EnhancedInputComponent->BindAction(FireAction,ETriggerEvent::Completed,this,&ABaseCharacter::Action_OnEndFire);
 		}
@@ -119,7 +127,24 @@ bool ABaseCharacter::IsDeath() const
 	if(!HealthComponent)return false;
 	return HealthComponent->IsDeath();
 }
- 
+
+void ABaseCharacter::AddExperience(int Amount)
+{
+	ExperienceValue+=Amount;
+	while (ExperienceValue>=GetMaxExperience())
+	{
+		Level++;
+		UpgradeNum++;
+		ExperienceValue-=GetMaxExperience();
+	}
+	
+}
+
+int ABaseCharacter::GetMaxExperience() const
+{
+	return 100+Level*50;
+}
+
 void ABaseCharacter::Action_MoveForward(const FInputActionValue& Value)
 {
 	if(!Can_Move())return; 
