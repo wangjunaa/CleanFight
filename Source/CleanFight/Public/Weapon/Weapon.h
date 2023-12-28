@@ -20,7 +20,7 @@ public:
 	FVector GetMuzzleLocation() const;
 	
 	UFUNCTION(BlueprintCallable,Category="Weapon")
-	float GetFireRate() const {return FireRate;}
+	float GetFireRate() const {return FireRate+FireRateOffset;}
 
 	UFUNCTION(BlueprintCallable,Category="Weapon")
 	void MakeShoot(const FVector& TargetPoint) const;
@@ -49,6 +49,8 @@ public:
 	UFUNCTION(BlueprintCallable,Category="Module")
 	void AddProjectileSpeed(float Amount){ProjectileSpeedOffset+=Amount;};
 	UFUNCTION(BlueprintCallable,Category="Module")
+	void AddFireRate(float Amount){FireRate+=Amount;};
+	UFUNCTION(BlueprintCallable,Category="Module")
 	void AddProjectileScale(float Amount){ProjectileScaleOffset+=Amount;};
 	
 	UFUNCTION(BlueprintCallable,Category="Module")
@@ -70,6 +72,7 @@ protected:
 private: 
 	UPROPERTY(VisibleAnywhere,Category="Weapon")
 	float FireRate=0.3;
+	float FireRateOffset=0;
 	UPROPERTY(EditAnywhere,Category="Weapon")
 	int MaxModuleNumber=5;
 	UPROPERTY(EditAnywhere,Category="Weapon")
