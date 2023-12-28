@@ -68,7 +68,7 @@ void UWeaponComponent::MakeShoot()
 
 bool UWeaponComponent::AddWeapon(AWeapon* NewWeapon)
 {
-	if(WeaponList.Num()>=MaxWeaponNumber)return false;
+	if(WeaponList.Num()>=MaxWeaponNumber || !NewWeapon)return false;
 	WeaponList.Add(NewWeapon);
 	const ABaseCharacter* Character=Cast<ABaseCharacter>(GetOwner());
 	NewWeapon->AttachToComponent(Character->GetMesh(),FAttachmentTransformRules(EAttachmentRule::SnapToTarget,false),WeaponSocketName);
