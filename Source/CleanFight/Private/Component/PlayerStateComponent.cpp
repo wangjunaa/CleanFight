@@ -19,7 +19,7 @@ TMap<UTexture2D*, int> UPlayerStateComponent::GetState()
 	return PlayerState;
 }
 
-TArray<AWeaponModule*> UPlayerStateComponent::GetBag()const
+TArray<AWeaponModule*> UPlayerStateComponent::GetBag() const
 {
 	return Bag;
 }

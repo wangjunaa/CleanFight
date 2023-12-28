@@ -27,6 +27,9 @@ public:
 	
 	UFUNCTION(BlueprintCallable,Category="Weapon")
 	int GetMaxModuleNumber() const;
+
+	UFUNCTION(BlueprintCallable,Category="Weapon")
+	void SetMaxModuleNumber(int Value){ MaxModuleNumber=Value;};
 	UFUNCTION(BlueprintCallable,Category="UI")
 	UMaterial* GetIcon() const;
 
@@ -39,6 +42,8 @@ public:
 	UFUNCTION(BlueprintCallable,Category="Weapon")
 	bool RemoveModule(int Index);
 	
+	UFUNCTION(BlueprintCallable,Category="Weapon")
+	USkeletalMeshComponent* GetMesh() const{return WeaponMesh;};
 	UFUNCTION(BlueprintCallable,Category="Module")
 	void AddProjectileDamage(float Amount){ProjectileDamageOffset+=Amount;};
 	UFUNCTION(BlueprintCallable,Category="Module")
@@ -47,7 +52,10 @@ public:
 	void AddProjectileScale(float Amount){ProjectileScaleOffset+=Amount;};
 	
 	UFUNCTION(BlueprintCallable,Category="Module")
-	void SetVisibility(bool Flag) const {WeaponMesh->SetVisibility(Flag);}; 
+	void SetVisibility(bool Flag) const {WeaponMesh->SetVisibility(Flag);};
+
+	UPROPERTY(EditAnywhere,Category="Weapon")
+	FString WeaponName;
 protected:
 	virtual void BeginPlay() override;
 

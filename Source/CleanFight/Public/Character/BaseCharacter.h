@@ -21,7 +21,7 @@ public:
 	ABaseCharacter();
 	
 	//基础组件
-	UPROPERTY(EditAnywhere,Category="Comp")
+	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Comp")
 	TObjectPtr<UCameraComponent> CameraComponent;
 	UPROPERTY(EditAnywhere,Category="Comp")
 	TObjectPtr<USpringArmComponent> SpringArmComponent;
@@ -104,7 +104,7 @@ protected:
 	bool bIsFiring=false;
 
 	UFUNCTION()
-	virtual void OnDeath() ;
+	virtual void OnDeath(AController* InstigatedBy) ;
 
 	UPROPERTY(EditAnywhere,Category="Team")
 	FName MyTeamName="Player";
@@ -138,12 +138,16 @@ public:
 	bool Can_Jump() const {return !IsStiff() && !bAiming && !bCrouch;};
 
 	UFUNCTION(BlueprintCallable,Category="Team")
-	FName GetTeamName(){return MyTeamName;} 
+	FName GetTeamName()const {return MyTeamName;} 
 	UFUNCTION(BlueprintCallable,Category="Team")
-	bool IsTeamMate(FName TeamName){return TeamName==MyTeamName;}
+	bool IsTeamMate(FName TeamName) const {return TeamName==MyTeamName;}
 
 	UFUNCTION(BlueprintCallable,Category="Experience")
 	void AddExperience(int Amount);
+	UFUNCTION(BlueprintCallable,Category="Experience")
+	int GetLv()const{return Level;} 
+	UFUNCTION(BlueprintCallable,Category="Experience")
+	float GetExperiencePercent()const{return 1.0*ExperienceValue/GetMaxExperience();}
 private:
 	
 	int ExperienceValue=0;

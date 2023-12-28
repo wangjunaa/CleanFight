@@ -4,7 +4,7 @@
 #include "Components/ActorComponent.h"
 #include "HealthComponent.generated.h"
 
-DECLARE_MULTICAST_DELEGATE(FOnDeath)
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnDeath,AController*)
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnHealthChanged,int)
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )

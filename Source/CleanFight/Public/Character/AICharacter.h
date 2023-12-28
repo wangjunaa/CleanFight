@@ -15,5 +15,5 @@ public:
 	void Fire();
 	void Aiming();
 	void EndAiming();
-	virtual void OnDeath() override;
+	virtual void OnDeath(AController* InstigatedBy) override;
 };

@@ -31,7 +31,7 @@ AWeapon* UWeaponComponent::GetCurrentWeapon() const
 	return WeaponList[CurrentWeaponIndex];
 }
 
-TArray<AWeapon*> UWeaponComponent::GetWeaponList() const
+TArray<AWeapon*> UWeaponComponent::GetWeaponList()const
 {
 	return WeaponList;
 }
@@ -64,6 +64,18 @@ void UWeaponComponent::MakeShoot()
 	//射击cd 
 	const float FireRate=GetCurrentWeapon()->GetFireRate();
 	GetWorld()->GetTimerManager().SetTimer(FireCDTimerHandle, this,&UWeaponComponent::FireCDFinish,FireRate,false,FireRate);
+}
+
+bool UWeaponComponent::AddWeapon(AWeapon* NewWeapon)
+{
+	if(WeaponList.Num()>=MaxWeaponNumber)return false;
+	WeaponList.Add(NewWeapon);
+	const ABaseCharacter* Character=Cast<ABaseCharacter>(GetOwner());
+	NewWeapon->AttachToComponent(Character->GetMesh(),FAttachmentTransformRules(EAttachmentRule::SnapToTarget,false),WeaponSocketName);
+	NewWeapon->SetOwner(GetOwner());
+	if(WeaponList.Num()>1)
+		NewWeapon->SetVisibility(false); 
+	return true;
 }
 
 FTransform UWeaponComponent::GetWeaponSocketTransform() const

@@ -3,6 +3,7 @@
 #include "Weapon/Projectile.h"
 
 #include "NiagaraFunctionLibrary.h" 
+#include "Character/BaseCharacter.h"
 #include "Component/HitVFXComponent.h"
 #include "Components/SphereComponent.h"
 #include "Engine/DamageEvents.h"
@@ -42,8 +43,9 @@ void AProjectile::OnProjectileHit(UPrimitiveComponent* HitComponent, AActor* Oth
 		}
 		else
 		{
-			HitVfxComp->PlayVfxOnHit(Hit); 
-			Hit.GetActor()->TakeDamage(ProjectileDamage,FDamageEvent(),nullptr,GetOwner());
+			HitVfxComp->PlayVfxOnHit(Hit);
+			AController* OwnerController=Cast<ABaseCharacter>(GetOwner())->GetController();
+			Hit.GetActor()->TakeDamage(ProjectileDamage,FDamageEvent(),OwnerController,this);
 		}
 	}
 	Destroy();
@@ -57,7 +59,7 @@ void AProjectile::Explore()
 	                                    this, nullptr, bDoFullDamage);
 	CollisionComp->AddRadialImpulse(GetActorLocation(), ExploreRadius, ExploreRadius, ERadialImpulseFalloff::RIF_Linear,
 	                                false);
-	UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(),ExploreVFX,GetActorLocation());
+	UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(),ExploreVfx,GetActorLocation());
 	
 }
  

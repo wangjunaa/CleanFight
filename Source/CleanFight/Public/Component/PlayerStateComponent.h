@@ -23,7 +23,7 @@ public:
 	TMap<UTexture2D*,int> GetState() ;
 	
 	UFUNCTION(BlueprintCallable,Category="Bag")
-	TArray<AWeaponModule*> GetBag() const ;
+	TArray<AWeaponModule*> GetBag() const;
 	UFUNCTION(BlueprintCallable,Category="Bag")
 	bool AddToBag(AWeaponModule* WeaponModule,int Index=-1);
 	UFUNCTION(BlueprintCallable,Category="Bag")

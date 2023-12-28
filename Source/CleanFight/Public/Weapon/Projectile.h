@@ -33,7 +33,7 @@ public:
 	TObjectPtr<UProjectileMovementComponent> ProjectileMovement;
 	
 	UPROPERTY(VisibleAnywhere,Category="Projectile")
-	TObjectPtr<UNiagaraSystem> BodyVFX;
+	TObjectPtr<UNiagaraSystem> BodyVfx;
 	  
 	UPROPERTY(VisibleAnywhere,Category="Projectile")
 	TObjectPtr<UHitVFXComponent> HitVfxComp;
@@ -53,7 +53,7 @@ public:
 	UPROPERTY(EditAnywhere,Category="Damage|Explore",meta=(EditCondition="bExplore"))
 	bool bDoFullDamage=true;
 	UPROPERTY(EditAnywhere,Category="Damage|Explore",meta=(EditCondition="bExplore"))
-	TObjectPtr<UNiagaraSystem> ExploreVFX=nullptr;
+	TObjectPtr<UNiagaraSystem> ExploreVfx=nullptr;
 private:
 	void Explore();
 	FTimerHandle FireTimerHandle;

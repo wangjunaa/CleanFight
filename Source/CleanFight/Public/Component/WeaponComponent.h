@@ -28,12 +28,13 @@ public:
 	UFUNCTION(BlueprintCallable,Category="Weapon")
 	AWeapon* GetCurrentWeapon() const; 
 	UFUNCTION(BlueprintCallable,Category="Weapon")
-	TArray<AWeapon*> GetWeaponList() const; 
+	TArray<AWeapon*> GetWeaponList()const; 
 	UFUNCTION(BlueprintCallable,Category="Weapon")
 	UMaterial* GetCurrentWeaponIcon() const; 
 	void Fire();
 	void MakeShoot(); 
-  
+	UFUNCTION(BlueprintCallable,Category="Weapon")
+	bool AddWeapon(AWeapon* NewWeapon);
 private:
 	
 	FTransform GetWeaponSocketTransform() const;
@@ -47,8 +48,7 @@ private:
 	TArray<TSubclassOf<AWeapon>> DefaultWeaponClassList;
 	
 	TArray<AWeapon*> WeaponList;
-	 
-
+	  
 	FTimerHandle FireCDTimerHandle;
 	void SpawnWeapon(); 
 	bool bFireInCD=false;

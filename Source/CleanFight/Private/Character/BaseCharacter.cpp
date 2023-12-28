@@ -295,7 +295,7 @@ void ABaseCharacter::Action_OnEndFire()
 	bIsFiring=false;
 }
 
-void ABaseCharacter::OnDeath() 
+void ABaseCharacter::OnDeath(AController* InstigatedBy) 
 {
 	//停止控制
 	GetCharacterMovement()->DisableMovement();  
@@ -318,5 +318,10 @@ void ABaseCharacter::OnDeath()
 		WeaponComponent->GetCurrentWeapon()->SetLifeSpan(5);
 	}
 	SetLifeSpan(5);
+	if(InstigatedBy){
+		ABaseCharacter* Character=Cast<ABaseCharacter>(InstigatedBy->GetCharacter());
+		Character->AddExperience(50);
+
+	}
 }
  

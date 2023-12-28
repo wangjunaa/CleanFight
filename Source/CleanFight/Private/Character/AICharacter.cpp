@@ -24,13 +24,13 @@ void AAICharacter::EndAiming()
 	bAiming=false;
 }
 
-void AAICharacter::OnDeath()
+void AAICharacter::OnDeath(AController* InstigatedBy)
 {
-	Super::OnDeath();
 	if(const AAIPlayerController* AIPlayerController=Cast<AAIPlayerController>(GetController()))
 	{
 		AIPlayerController->BrainComponent->Cleanup();
 	}
+	Super::OnDeath(InstigatedBy);
 }
  
   

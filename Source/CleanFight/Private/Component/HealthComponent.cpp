@@ -37,14 +37,14 @@ float UHealthComponent::GetHealthPercent() const
 	return MaxHealth>0?Health/MaxHealth:0;
 }
 
-void UHealthComponent::OnTakeAnyDamage(AActor* DamagedActor, float Damage, const UDamageType* DamageType,
+void UHealthComponent::OnTakeAnyDamage(AActor* DamagedActor, const float Damage, const UDamageType* DamageType,
 	AController* InstigatedBy, AActor* DamageCauser)
 {
 	
 	if(Damage<=0 || IsDeath())return; 
 	SetHealth(Health-Damage);
 	if(IsDeath())
-		OnDeath.Broadcast();
+		OnDeath.Broadcast(InstigatedBy);
 	else  if(Health<MaxHealth && GetWorld() && AutoHeal)
 	{
 		GetWorld()->GetTimerManager().SetTimer(HealTimerHandle,this,&UHealthComponent::HealUpdate,HealUpdateTime,true,HealDelay);
