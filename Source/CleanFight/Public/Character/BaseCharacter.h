@@ -55,10 +55,13 @@ protected:
 	UPROPERTY(EditAnywhere,Category="Input")
 	TObjectPtr<UInputAction> AimAction;
 	UPROPERTY(EditAnywhere,Category="Input")
-	TObjectPtr<UInputAction> FireAction;
-
+	TObjectPtr<UInputAction> FireAction; 
+	UPROPERTY(EditAnywhere,Category="Input")
+	TObjectPtr<UInputAction> NextWeaponAction; 
+	UPROPERTY(EditAnywhere,Category="Input")
+	TObjectPtr<UInputAction> LastWeaponAction;
 	UPROPERTY(EditAnywhere,Category="Movement")
-	float CrouchSpeed=60;
+	float CrouchSpeed=50;
 	UPROPERTY(EditAnywhere,Category="Movement")
 	float WalkSpeed=100;
 	UPROPERTY(EditAnywhere,Category="Movement")

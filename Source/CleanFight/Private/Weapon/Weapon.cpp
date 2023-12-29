@@ -25,7 +25,7 @@ void AWeapon::MakeShoot(const FVector& TargetPoint) const
 	Projectile->SetActorScale3D({ProjectileScaleOffset,ProjectileScaleOffset,ProjectileScaleOffset});
 	Projectile->ProjectileMovement.Get()->InitialSpeed+=ProjectileSpeedOffset;
 	Projectile->ProjectileDamage+=ProjectileDamageOffset;
-	Projectile->SetOwner(GetOwner());
+	Projectile->SetOwner(GetOwner()); 
 }
 
 int AWeapon::GetMaxModuleNumber() const
@@ -47,13 +47,16 @@ bool AWeapon::AddModule(AWeaponModule* Module)
 {
 	if(WeaponModules.Num()>=MaxModuleNumber)return false;
 	WeaponModules.Add(Module);
+	Module->ExecuteModule(this);
 	return true;
 }
 
 bool AWeapon::RemoveModule(int Index)
 {
 	if(Index>=WeaponModules.Num())return false;
+	WeaponModules[Index]->DeleteModule(this);
 	WeaponModules.RemoveAt(Index);
+	
 	return true;
 }
 

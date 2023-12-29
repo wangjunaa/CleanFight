@@ -118,6 +118,14 @@ void ABaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 		{ 
 			EnhancedInputComponent->BindAction(FireAction,ETriggerEvent::Triggered,this,&ABaseCharacter::Action_OnFire);
 			EnhancedInputComponent->BindAction(FireAction,ETriggerEvent::Completed,this,&ABaseCharacter::Action_OnEndFire);
+		} 
+		if(NextWeaponAction) 
+		{ 
+			EnhancedInputComponent->BindAction(NextWeaponAction,ETriggerEvent::Started,WeaponComponent.Get(),&UWeaponComponent::NextWeapon);
+		} 
+		if(LastWeaponAction) 
+		{ 
+			EnhancedInputComponent->BindAction(LastWeaponAction,ETriggerEvent::Started,WeaponComponent.Get(),&UWeaponComponent::LastWeapon);
 		}
 	}
 }
@@ -148,7 +156,8 @@ int ABaseCharacter::GetMaxExperience() const
 void ABaseCharacter::Action_MoveForward(const FInputActionValue& Value)
 {
 	if(!Can_Move())return; 
-	GetCharacterMovement()->MaxWalkSpeed=WalkSpeed;
+	if(IsCrouch())	GetCharacterMovement()->MaxWalkSpeed=CrouchSpeed;
+	else  GetCharacterMovement()->MaxWalkSpeed=WalkSpeed;
 	UE_LOG(LogBaseCharacter,Display,TEXT("前后移动"));
 	AddMovementInput(CameraComponent->GetForwardVector(),Value.Get<float>());
 }
@@ -183,8 +192,7 @@ void ABaseCharacter::Action_LookUp(const FInputActionValue& Value)
 
 void ABaseCharacter::Action_Running()
 {
-	if(!Can_Run())return;
-	GetCharacterMovement()->MaxWalkSpeed=RunSpeed;
+	if(!Can_Run())return; 
 	//瞄准时不奔跑
 	if(IsAiming())
 	{
@@ -193,6 +201,7 @@ void ABaseCharacter::Action_Running()
 	} 
 	if(!bRunning)
 	{
+		GetCharacterMovement()->MaxWalkSpeed=RunSpeed;
 		UE_LOG(LogBaseCharacter,Display,TEXT("开始奔跑"));
 		check(GetCharacterMovement());
 		bRunning=true; 
@@ -203,7 +212,7 @@ void ABaseCharacter::Action_Running()
 void ABaseCharacter::Action_EndRun()
 {
 	UE_LOG(LogBaseCharacter,Display,TEXT("结束奔跑")); 
-	check(GetCharacterMovement()); 
+	check(GetCharacterMovement());  
 	bRunning=false;
 }
 
@@ -212,16 +221,14 @@ void ABaseCharacter::Action_Crouch()
 	if(IsStiff() || IsRunning())return;
 	UE_LOG(LogBaseCharacter,Display,TEXT("蹲下")); 
 	bCrouch=true;
-	check(GetCharacterMovement());
-	GetCharacterMovement()->MaxWalkSpeed=CrouchSpeed;
+	check(GetCharacterMovement()); 
 }
 
 void ABaseCharacter::Action_EndCrouch()
 {
 	UE_LOG(LogBaseCharacter,Display,TEXT("起身")); 
 	bCrouch=false; 
-	check(GetCharacterMovement());
-	GetCharacterMovement()->MaxWalkSpeed=WalkSpeed; 
+	check(GetCharacterMovement()); 
 }
 
 void ABaseCharacter::Action_StartAim()
@@ -313,7 +320,7 @@ void ABaseCharacter::OnDeath(AController* InstigatedBy)
 		GetMesh()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);		
 	}
 	
-	if(WeaponComponent)
+	if(WeaponComponent && WeaponComponent->GetCurrentWeapon())
 	{
 		WeaponComponent->GetCurrentWeapon()->SetLifeSpan(5);
 	}

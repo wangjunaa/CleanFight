@@ -26,4 +26,6 @@ public:
 	TObjectPtr<UTexture2D> Icon;
 	UFUNCTION(BlueprintNativeEvent)
 	void ExecuteModule(AWeapon* OwnerWeapon);
+	UFUNCTION(BlueprintNativeEvent)
+	void DeleteModule(AWeapon* OwnerWeapon);
 };

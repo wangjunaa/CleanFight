@@ -2,6 +2,7 @@
 
 #include "Component/WeaponComponent.h"
 
+#include "NiagaraFunctionLibrary.h"
 #include "Character/BaseCharacter.h"
 #include "Weapon/Weapon.h" 
 
@@ -76,6 +77,35 @@ bool UWeaponComponent::AddWeapon(AWeapon* NewWeapon)
 	if(WeaponList.Num()>1)
 		NewWeapon->SetVisibility(false); 
 	return true;
+}
+
+void UWeaponComponent::NextWeapon()
+{
+	if(WeaponList.Num()<=1 || !GetCurrentWeapon())return;
+	GetCurrentWeapon()->SetVisibility(false);
+	CurrentWeaponIndex=(CurrentWeaponIndex+WeaponList.Num()-1)%WeaponList.Num();
+	GetCurrentWeapon()->SetVisibility(true);
+	if(SwitchWeaponVfx)
+	{ 
+		const auto Location=GetCurrentWeapon()->GetActorLocation();
+		const auto Rotator=GetCurrentWeapon()->GetActorRotation();
+		UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(),SwitchWeaponVfx,Location,Rotator);
+	}
+}
+  
+void UWeaponComponent::LastWeapon()
+{
+	if(WeaponList.Num()<=1 || !GetCurrentWeapon())return;
+	GetCurrentWeapon()->SetVisibility(false);
+	CurrentWeaponIndex=(CurrentWeaponIndex+WeaponList.Num()-1)%WeaponList.Num();
+	GetCurrentWeapon()->SetVisibility(true);
+	
+	if(SwitchWeaponVfx)
+	{
+		const auto Location=GetCurrentWeapon()->GetActorLocation();
+		const auto Rotator=GetCurrentWeapon()->GetActorRotation();
+		UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(),SwitchWeaponVfx,Location,Rotator);
+	}
 }
 
 FTransform UWeaponComponent::GetWeaponSocketTransform() const

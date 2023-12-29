@@ -25,6 +25,11 @@ void AWeaponModule::Tick(float DeltaTime)
 
 }
 
+void AWeaponModule::DeleteModule_Implementation(AWeapon* OwnerWeapon)
+{
+	if(!OwnerWeapon)return;
+}
+
 void AWeaponModule::ExecuteModule_Implementation(AWeapon* OwnerWeapon)
 {
 	if(!OwnerWeapon)return;

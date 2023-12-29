@@ -6,6 +6,7 @@
 #include "WeaponComponent.generated.h"
 
 
+class UNiagaraSystem;
 class AWeapon;
  
 
@@ -35,6 +36,11 @@ public:
 	void MakeShoot(); 
 	UFUNCTION(BlueprintCallable,Category="Weapon")
 	bool AddWeapon(AWeapon* NewWeapon);
+	
+	UFUNCTION(BlueprintCallable,Category="Weapon")
+	void NextWeapon();
+	UFUNCTION(BlueprintCallable,Category="Weapon")
+	void LastWeapon();
 private:
 	
 	FTransform GetWeaponSocketTransform() const;
@@ -46,6 +52,8 @@ private:
 	int CurrentWeaponIndex=0;
 	UPROPERTY(EditAnywhere,Category="Weapon")
 	TArray<TSubclassOf<AWeapon>> DefaultWeaponClassList;
+	UPROPERTY(EditAnywhere,Category="VFX")
+	TObjectPtr<UNiagaraSystem>SwitchWeaponVfx;
 	
 	TArray<AWeapon*> WeaponList;
 	  
@@ -55,4 +63,5 @@ private:
 	void FireCDFinish(){bFireInCD=false;}
 	float FireRange=10000;
 	int MaxWeaponNumber=4;
+	
 };
