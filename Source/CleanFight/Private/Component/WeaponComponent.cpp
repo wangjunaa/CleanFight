@@ -17,7 +17,7 @@ void UWeaponComponent::BeginPlay()
 {
 	Super::BeginPlay();
 	SpawnWeapon();
-	
+	ModuleBag.SetNum(MaxBagNum); 
 }
 
 void UWeaponComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
@@ -107,6 +107,49 @@ void UWeaponComponent::LastWeapon()
 		UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(),SwitchWeaponVfx,Location,Rotator);
 	}
 }
+
+TArray<AWeaponModule*> UWeaponComponent::GetModuleBag() const
+{
+	return ModuleBag;
+}
+
+ 
+
+bool UWeaponComponent::AddToBag(AWeaponModule* WeaponModule, int Index)
+{ 
+	if(Index==-1)
+	{
+		for (auto &Element : ModuleBag)
+		{
+			if(!Element)
+			{
+				Element=WeaponModule;
+				return true;
+			}
+		}
+		return  false;
+	}
+	ModuleBag[Index]=WeaponModule;
+	return true;
+}
+
+void UWeaponComponent::ClearBag()
+{
+	ModuleBag.Empty();
+}
+
+bool UWeaponComponent::RemoveFromBag( int Index)
+{
+	if(Index>=ModuleBag.Num())return false;
+	ModuleBag[Index]=nullptr;
+	return true;
+}
+
+int UWeaponComponent::GetMaxBagNum() const
+{
+	return MaxBagNum;
+}
+
 
 FTransform UWeaponComponent::GetWeaponSocketTransform() const
 {

@@ -201,11 +201,11 @@ void ABaseCharacter::Action_Running()
 	} 
 	if(!bRunning)
 	{
-		GetCharacterMovement()->MaxWalkSpeed=RunSpeed;
 		UE_LOG(LogBaseCharacter,Display,TEXT("开始奔跑"));
 		check(GetCharacterMovement());
 		bRunning=true; 
 	}
+	GetCharacterMovement()->MaxWalkSpeed=RunSpeed;
 	AddMovementInput(CameraComponent->GetForwardVector());
 }
 

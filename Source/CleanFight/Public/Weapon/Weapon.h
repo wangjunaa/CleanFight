@@ -29,7 +29,7 @@ public:
 	int GetMaxModuleNumber() const;
 
 	UFUNCTION(BlueprintCallable,Category="Weapon")
-	void SetMaxModuleNumber(int Value){ MaxModuleNumber=Value;};
+	void SetMaxModuleNumber(int Value);
 	UFUNCTION(BlueprintCallable,Category="UI")
 	UMaterial* GetIcon() const;
 
@@ -37,8 +37,9 @@ public:
 	TArray<AWeaponModule*> GetWeaponModules() const;
 	
 	UFUNCTION(BlueprintCallable,Category="Weapon")
-	bool AddModule(AWeaponModule* Module);
-
+	bool AddModule(AWeaponModule* Module,int Index=-1); 
+	UFUNCTION(BlueprintCallable,Category="Weapon")
+	void ClearModule();
 	UFUNCTION(BlueprintCallable,Category="Weapon")
 	bool RemoveModule(int Index);
 	

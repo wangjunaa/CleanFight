@@ -18,7 +18,9 @@ public:
 	virtual void BeginPlay() override;
  
 	UFUNCTION(BlueprintCallable,Category="Health")
-	float GetHealth()const{return Health;}
+	int GetHealth()const{return Health;}
+	UFUNCTION(BlueprintCallable,Category="Health")
+	int GetMaxHealth()const{return MaxHealth;}
 	UFUNCTION(BlueprintCallable,Category="Health")
 	float GetHealthPercent() const;
 	UFUNCTION(BlueprintCallable,Category="Health")

@@ -151,6 +151,8 @@ public:
 	int GetLv()const{return Level;} 
 	UFUNCTION(BlueprintCallable,Category="Experience")
 	float GetExperiencePercent()const{return 1.0*ExperienceValue/GetMaxExperience();}
+	UFUNCTION(BlueprintCallable,Category="Experience")
+	int GetUpgradeNum()const{return UpgradeNum;}
 private:
 	
 	int ExperienceValue=0;

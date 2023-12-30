@@ -22,17 +22,9 @@ public:
 	UFUNCTION(BlueprintCallable,Category="State")
 	TMap<UTexture2D*,int> GetState() ;
 	
-	UFUNCTION(BlueprintCallable,Category="Bag")
-	TArray<AWeaponModule*> GetBag() const;
-	UFUNCTION(BlueprintCallable,Category="Bag")
-	bool AddToBag(AWeaponModule* WeaponModule,int Index=-1);
-	UFUNCTION(BlueprintCallable,Category="Bag")
-	bool RemoveFromBag(AWeaponModule* WeaponModule,int Index);
 protected:
 	virtual void BeginPlay() override;
 	
 private:  
 	TMap<UTexture2D*,int> PlayerState;
-	TArray<AWeaponModule*> Bag;
-	int MaxBagNum=56;
 };

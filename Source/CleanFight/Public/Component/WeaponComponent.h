@@ -41,6 +41,17 @@ public:
 	void NextWeapon();
 	UFUNCTION(BlueprintCallable,Category="Weapon")
 	void LastWeapon();
+	
+	UFUNCTION(BlueprintCallable,Category="Bag")
+	TArray<AWeaponModule*> GetModuleBag() const;
+	UFUNCTION(BlueprintCallable,Category="Bag")
+	bool AddToBag(AWeaponModule* WeaponModule,int Index=-1); 
+	UFUNCTION(BlueprintCallable,Category="Weapon")
+	void ClearBag();
+	UFUNCTION(BlueprintCallable,Category="Bag")
+	bool RemoveFromBag(int Index);
+	UFUNCTION(BlueprintCallable,Category="Bag")
+	int GetMaxBagNum() const;
 private:
 	
 	FTransform GetWeaponSocketTransform() const;
@@ -64,4 +75,6 @@ private:
 	float FireRange=10000;
 	int MaxWeaponNumber=4;
 	
+	TArray<AWeaponModule*> ModuleBag;
+	int MaxBagNum=132;
 };
