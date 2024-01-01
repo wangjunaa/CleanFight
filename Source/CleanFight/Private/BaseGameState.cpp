@@ -19,7 +19,7 @@ void ABaseGameState::Tick(float DeltaSeconds)
 void ABaseGameState::BeginPlay()
 {
 	Super::BeginPlay();
-	SpawnEnemy();
+	GetWorldTimerManager().SetTimer(EnemySpawnTimerHandle,this,&ABaseGameState::SpawnEnemy,GetEnemySpawnRate(),false);
 }
 
 FText ABaseGameState::GetPlayTime()
@@ -79,8 +79,9 @@ void ABaseGameState::SpawnEnemy()
 	NaviSystem->GetRandomReachablePointInRadius(Pawn->GetActorLocation(), EnemySpawnRadius, NavLocation);
 	const int Index=rand()%EnemyList.Num();
 	const FTransform Transform={{0,0,0},NavLocation.Location};
-	GetWorld()->SpawnActor<AAICharacter>(EnemyList[Index],Transform); 
+	GetWorld()->SpawnActor<AAICharacter>(EnemyList[Index],Transform);
 	GetWorldTimerManager().SetTimer(EnemySpawnTimerHandle,this,&ABaseGameState::SpawnEnemy,GetEnemySpawnRate(),false);
+
 }
 
 float ABaseGameState::GetEnemySpawnRate() const

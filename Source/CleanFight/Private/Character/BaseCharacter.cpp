@@ -352,7 +352,7 @@ void ABaseCharacter::OnDeath(AController* InstigatedBy)
 	SetLifeSpan(5);
 	if(InstigatedBy){
 		ABaseCharacter* Character=Cast<ABaseCharacter>(InstigatedBy->GetCharacter());
-		Character->AddExperience(50);
+		Character->AddExperience(Experience);
 
 	}
 }

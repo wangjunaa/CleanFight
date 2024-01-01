@@ -93,14 +93,16 @@ bool UWeaponComponent::RemoveWeapon(int Index)
 	if(Index>=WeaponList.Num())return false;
 	WeaponList[Index]->Destroy();
 	WeaponList.RemoveAt(Index);
+	NextWeapon();
+	LastWeapon();
 	return true; 
 }
 
 void UWeaponComponent::NextWeapon()
 {
-	if(WeaponList.Num()<=1 || !GetCurrentWeapon())return;
+	if(WeaponList.Num()==0 || !GetCurrentWeapon())return;
 	GetCurrentWeapon()->SetVisibility(false);
-	CurrentWeaponIndex=(CurrentWeaponIndex+WeaponList.Num()-1)%WeaponList.Num();
+	CurrentWeaponIndex=(CurrentWeaponIndex+1)%WeaponList.Num();
 	GetCurrentWeapon()->SetVisibility(true);
 	if(SwitchWeaponVfx)
 	{ 
@@ -112,7 +114,7 @@ void UWeaponComponent::NextWeapon()
   
 void UWeaponComponent::LastWeapon()
 {
-	if(WeaponList.Num()<=1 || !GetCurrentWeapon())return;
+	if(WeaponList.Num()==0 || !GetCurrentWeapon())return;
 	GetCurrentWeapon()->SetVisibility(false);
 	CurrentWeaponIndex=(CurrentWeaponIndex+WeaponList.Num()-1)%WeaponList.Num();
 	GetCurrentWeapon()->SetVisibility(true);

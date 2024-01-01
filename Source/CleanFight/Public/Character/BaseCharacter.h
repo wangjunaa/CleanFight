@@ -170,4 +170,6 @@ private:
 	int Level=0;
 	int GetMaxExperience() const;
 	int UpgradeNum=0;
+	UPROPERTY(EditAnywhere)
+	int Experience=50;
 };
