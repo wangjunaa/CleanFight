@@ -29,14 +29,8 @@ EBTNodeResult::Type UBTTask_GetRandomLocation::ExecuteTask(UBehaviorTreeComponen
 	{
 		CenterActor=Cast<AActor>(Blackboard->GetValueAsObject(CenterActorKey.SelectedKeyName));
 	}
-<<<<<<< HEAD
 	const bool IsFound = NaviSystem->GetRandomReachablePointInRadius(CenterActor->GetActorLocation(), Radius, NavLocation); 
 		  
-=======
-	if(const bool IsFound = NaviSystem->GetRandomReachablePointInRadius(CenterActor->GetActorLocation(), Radius, NavLocation); !IsFound)
-		return EBTNodeResult::Failed;
-
->>>>>>> bb3e997d8dd3414c71be7418da4129fd8e292950
 	Blackboard->SetValueAsVector(LocationKey.SelectedKeyName,NavLocation);
 	return EBTNodeResult::Succeeded;
 }

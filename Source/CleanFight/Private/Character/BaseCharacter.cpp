@@ -148,7 +148,6 @@ void ABaseCharacter::AddExperience(int Amount)
 	
 }
 
-<<<<<<< HEAD
 void ABaseCharacter::OnUpgrade()
 {
 	UpgradeNum--;
@@ -174,8 +173,6 @@ void ABaseCharacter::AddJumpNum()
 	JumpMaxCount+=1;
 }
 
-=======
->>>>>>> bb3e997d8dd3414c71be7418da4129fd8e292950
 int ABaseCharacter::GetMaxExperience() const
 {
 	return 100+Level*50;

@@ -20,7 +20,6 @@ void AAIPlayerController::OnPossess(APawn* InPawn)
 
 }
 
-<<<<<<< HEAD
 void AAIPlayerController::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
@@ -30,11 +29,6 @@ void AAIPlayerController::Tick(float DeltaSeconds)
 AActor* AAIPlayerController::GetClosestEnemy() const
 {
 	const ABaseCharacter* OwnerCharacter=Cast<ABaseCharacter>(GetCharacter());
-=======
-AActor* AAIPlayerController::GetClosestEnemy() const
-{
-	ABaseCharacter* OwnerCharacter=Cast<ABaseCharacter>(GetCharacter());
->>>>>>> bb3e997d8dd3414c71be7418da4129fd8e292950
 	if(!OwnerCharacter)return nullptr;
 	TArray<AActor*> Actors;
 	//获取视野中所有actor
@@ -58,7 +52,6 @@ AActor* AAIPlayerController::GetClosestEnemy() const
 	}
 	return ClosestCharacter;
 }
-<<<<<<< HEAD
  
 void AAIPlayerController::LookForwardEnemy()
 {  
@@ -66,20 +59,4 @@ void AAIPlayerController::LookForwardEnemy()
 	if(!BlackBoard)return;
 	AActor* ClosestEnemy=Cast<AActor>(BlackBoard->GetValueAsObject(BlackBoardEnemyKey)); 
 	SetFocus(ClosestEnemy); 
-=======
-
-void AAIPlayerController::Tick(float DeltaSeconds)
-{
-	Super::Tick(DeltaSeconds);
-	LookForwardClosestEnemy();
-}
-
-void AAIPlayerController::LookForwardClosestEnemy()
-{
-	const UBlackboardComponent* BlackBoard=GetBlackboardComponent(); 
-	if(!BlackBoard)return;
-	AActor* ClosestEnemy=Cast<AActor>(BlackBoard->GetValueAsObject(BlackBoardEnemyKey)); 
-	SetFocus(ClosestEnemy);
-	
->>>>>>> bb3e997d8dd3414c71be7418da4129fd8e292950
 }

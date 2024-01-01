@@ -1,13 +1,10 @@
 
 #include "BaseGameState.h"
 
-<<<<<<< HEAD
 #include "NavigationSystem.h"
 #include "Character/AICharacter.h"
 #include "Component/WeaponComponent.h"
 
-=======
->>>>>>> bb3e997d8dd3414c71be7418da4129fd8e292950
 ABaseGameState::ABaseGameState()
 {
 	PrimaryActorTick.bCanEverTick=true;
@@ -19,15 +16,12 @@ void ABaseGameState::Tick(float DeltaSeconds)
 	PlayTime+=DeltaSeconds;
 }
 
-<<<<<<< HEAD
 void ABaseGameState::BeginPlay()
 {
 	Super::BeginPlay();
 	SpawnEnemy();
 }
 
-=======
->>>>>>> bb3e997d8dd3414c71be7418da4129fd8e292950
 FText ABaseGameState::GetPlayTime()
 {
 	int Minute=PlayTime/60;
@@ -68,7 +62,6 @@ FString ABaseGameState::GetDifficultText() const
 	if(PlayTime<=60*60) return	L"极难";
 	return	L"史诗";
 }
-<<<<<<< HEAD
 
 void ABaseGameState::SpawnEnemy()
 {
@@ -94,5 +87,3 @@ float ABaseGameState::GetEnemySpawnRate() const
 {
 	return 30-GetDifficultLevel()*4;
 }
-=======
->>>>>>> bb3e997d8dd3414c71be7418da4129fd8e292950

@@ -12,11 +12,8 @@ class CLEANFIGHT_API UBTTask_Fire : public UBTTaskNode
 public:
 	UBTTask_Fire();
 	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
-<<<<<<< HEAD
 	UPROPERTY(EditAnywhere)
 	FBlackboardKeySelector TargetEnemy;
 	UPROPERTY(EditAnywhere)
 	float FireRange=300;
-=======
->>>>>>> bb3e997d8dd3414c71be7418da4129fd8e292950
 };

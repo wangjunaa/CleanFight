@@ -4,10 +4,7 @@
 #include "GameFramework/Actor.h"
 #include "PickUpProp.generated.h"
 
-<<<<<<< HEAD
 class ABaseCharacter;
-=======
->>>>>>> bb3e997d8dd3414c71be7418da4129fd8e292950
 class UCapsuleComponent;
 
 UCLASS()
@@ -18,7 +15,6 @@ class CLEANFIGHT_API APickUpProp : public AActor
 public:	
 	APickUpProp();  
 	UPROPERTY(VisibleAnywhere,Category="Comp")
-<<<<<<< HEAD
 	TObjectPtr<USceneComponent> SceneComp; 
 	
 	UPROPERTY(VisibleAnywhere,Category="Comp")
@@ -40,11 +36,6 @@ public:
 	void HighLightOn();
 	UFUNCTION(BlueprintCallable)
 	void HighLightOff();
-=======
-	TObjectPtr<UCapsuleComponent> CollisionComp;
-	UFUNCTION(BlueprintCallable,Category="UI")
-	UTexture2D* GetIcon()const{return Icon;}
->>>>>>> bb3e997d8dd3414c71be7418da4129fd8e292950
 	
 protected:
 	virtual void BeginPlay() override;

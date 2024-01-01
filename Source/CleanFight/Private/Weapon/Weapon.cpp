@@ -27,10 +27,7 @@ void AWeapon::MakeShoot(const FVector& TargetPoint) const
 	Projectile->ProjectileDamage+=ProjectileDamageOffset;
 	Projectile->SetOwner(GetOwner());
 	Projectile->FinishSpawning({Rotator,Location});
-<<<<<<< HEAD
 	Projectile->SetLifeSpan(5);
-=======
->>>>>>> bb3e997d8dd3414c71be7418da4129fd8e292950
 }
 
 int AWeapon::GetMaxModuleNumber() const

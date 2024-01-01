@@ -21,7 +21,6 @@ public:
 	ABaseCharacter();
 	
 	//基础组件
-<<<<<<< HEAD
 	UPROPERTY(VisibleAnywhere,BlueprintReadWrite,Category="Comp")
 	TObjectPtr<UCameraComponent> CameraComponent;
 	UPROPERTY(VisibleAnywhere,BlueprintReadWrite,Category="Comp")
@@ -31,17 +30,6 @@ public:
 	UPROPERTY(VisibleAnywhere,BlueprintReadWrite,Category="Comp")
 	TObjectPtr<UHealthComponent> HealthComponent;
 	UPROPERTY(VisibleAnywhere,BlueprintReadWrite,Category="Comp")
-=======
-	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Comp")
-	TObjectPtr<UCameraComponent> CameraComponent;
-	UPROPERTY(EditAnywhere,Category="Comp")
-	TObjectPtr<USpringArmComponent> SpringArmComponent;
-	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Comp")
-	TObjectPtr<UWeaponComponent> WeaponComponent;  
-	UPROPERTY(EditAnywhere,Category="Comp")
-	TObjectPtr<UHealthComponent> HealthComponent;
-	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Comp")
->>>>>>> bb3e997d8dd3414c71be7418da4129fd8e292950
 	TObjectPtr<UPlayerStateComponent> PlayerStatComponent;
  
 protected:
@@ -165,7 +153,6 @@ public:
 	float GetExperiencePercent()const{return 1.0*ExperienceValue/GetMaxExperience();}
 	UFUNCTION(BlueprintCallable,Category="Experience")
 	int GetUpgradeNum()const{return UpgradeNum;}
-<<<<<<< HEAD
 	UFUNCTION(BlueprintCallable,Category="Experience")
 	void OnUpgrade();
 	UFUNCTION(BlueprintCallable,Category="StateUp")
@@ -177,8 +164,6 @@ public:
 	UFUNCTION(BlueprintCallable,Category="StateUp")
 	void AddJumpNum();
 	
-=======
->>>>>>> bb3e997d8dd3414c71be7418da4129fd8e292950
 private:
 	
 	int ExperienceValue=0;

@@ -47,7 +47,6 @@ UMaterial* UWeaponComponent::GetCurrentWeaponIcon() const
 	return nullptr;
 }
 
-<<<<<<< HEAD
 int UWeaponComponent::GetCurrentWeaponIndex() const
 {
 	if (WeaponList.Num())
@@ -57,8 +56,6 @@ int UWeaponComponent::GetCurrentWeaponIndex() const
 	return 0;
 }
 
-=======
->>>>>>> bb3e997d8dd3414c71be7418da4129fd8e292950
 void UWeaponComponent::Fire()
 {
 	if(!GetCurrentWeapon() || bFireInCD)return;
@@ -91,18 +88,14 @@ bool UWeaponComponent::AddWeapon(AWeapon* NewWeapon)
 	return true;
 }
 
-<<<<<<< HEAD
 bool UWeaponComponent::RemoveWeapon(int Index)
 {
 	if(Index>=WeaponList.Num())return false;
-	NextWeapon();
 	WeaponList[Index]->Destroy();
 	WeaponList.RemoveAt(Index);
 	return true; 
 }
 
-=======
->>>>>>> bb3e997d8dd3414c71be7418da4129fd8e292950
 void UWeaponComponent::NextWeapon()
 {
 	if(WeaponList.Num()<=1 || !GetCurrentWeapon())return;
@@ -138,13 +131,8 @@ TArray<AWeaponModule*> UWeaponComponent::GetModuleBag() const
 }
 
  
-<<<<<<< HEAD
-bool UWeaponComponent::AddToBag(AWeaponModule* WeaponModule, int Index)
-
-=======
 
 bool UWeaponComponent::AddToBag(AWeaponModule* WeaponModule, int Index)
->>>>>>> bb3e997d8dd3414c71be7418da4129fd8e292950
 { 
 	if(Index==-1)
 	{

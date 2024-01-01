@@ -13,11 +13,7 @@ class CLEANFIGHT_API AAIPlayerController : public AAIController
 public:
 	AAIPlayerController(); 
 	virtual void OnPossess(APawn* InPawn) override;  
-<<<<<<< HEAD
 	virtual void Tick(float DeltaSeconds) override;
-=======
-	
->>>>>>> bb3e997d8dd3414c71be7418da4129fd8e292950
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<UAIPerceptionComponent> AIPerceptionComp;
 	
@@ -28,15 +24,9 @@ public:
 	FName BlackBoardEnemyKey="EnemyActor";
 
 	AActor* GetClosestEnemy() const;
-<<<<<<< HEAD
 	void LookForwardEnemy();
 
 
 private: 
-=======
-private:
-	virtual void Tick(float DeltaSeconds) override;
-	void LookForwardClosestEnemy();   
->>>>>>> bb3e997d8dd3414c71be7418da4129fd8e292950
 	
 };

@@ -32,20 +32,14 @@ public:
 	TArray<AWeapon*> GetWeaponList()const; 
 	UFUNCTION(BlueprintCallable,Category="Weapon")
 	UMaterial* GetCurrentWeaponIcon() const; 
-<<<<<<< HEAD
 	UFUNCTION(BlueprintCallable,Category="Weapon")
 	int GetCurrentWeaponIndex() const; 
-=======
->>>>>>> bb3e997d8dd3414c71be7418da4129fd8e292950
 	void Fire();
 	void MakeShoot(); 
 	UFUNCTION(BlueprintCallable,Category="Weapon")
 	bool AddWeapon(AWeapon* NewWeapon);
-<<<<<<< HEAD
 	UFUNCTION(BlueprintCallable,Category="Weapon")
 	bool RemoveWeapon(int Index);
-=======
->>>>>>> bb3e997d8dd3414c71be7418da4129fd8e292950
 	
 	UFUNCTION(BlueprintCallable,Category="Weapon")
 	void NextWeapon();

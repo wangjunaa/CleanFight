@@ -29,15 +29,11 @@ public:
 	void SetHealth(float NewHealth);
 	UFUNCTION(BlueprintCallable,Category="Health")
 	void AddHealth(float Amount);
-<<<<<<< HEAD
 	UFUNCTION(BlueprintCallable,Category="Health")
 	void AddMaxHealth(float Amount){MaxHealth+=Amount;AddHealth(Amount);};
 	UFUNCTION(BlueprintCallable,Category="Health")
 	void AddHealValue(float Amount){HealValue+=Amount;};
 	
-=======
-
->>>>>>> bb3e997d8dd3414c71be7418da4129fd8e292950
 	FOnDeath OnDeath;
 	FOnHealthChanged OnHealthChanged;
 	
