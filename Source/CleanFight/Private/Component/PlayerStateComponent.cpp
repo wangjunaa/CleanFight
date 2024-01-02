@@ -6,7 +6,6 @@
 UPlayerStateComponent::UPlayerStateComponent()
 {
 	PrimaryComponentTick.bCanEverTick = false; 
-
 }
 
 void UPlayerStateComponent::AddState(UTexture2D* Texture, int Num)
