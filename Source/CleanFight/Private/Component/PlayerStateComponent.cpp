@@ -10,7 +10,9 @@ UPlayerStateComponent::UPlayerStateComponent()
 
 void UPlayerStateComponent::AddState(UTexture2D* Texture, int Num)
 {
-	PlayerState[Texture]+=Num;
+	if(PlayerState.Contains(Texture))
+		PlayerState[Texture]+=Num;
+	else PlayerState.Add(Texture,Num);
 }
 
 TMap<UTexture2D*, int> UPlayerStateComponent::GetState()
