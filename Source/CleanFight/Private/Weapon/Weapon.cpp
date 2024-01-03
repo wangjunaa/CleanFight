@@ -3,6 +3,7 @@
 
 #include "AssetTypeActions/AssetDefinition_SoundBase.h"
 #include "GameFramework/ProjectileMovementComponent.h"
+#include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Prop/WeaponModule.h"
 #include "Weapon/Projectile.h"
@@ -29,7 +30,12 @@ void AWeapon::MakeShoot(const FVector& TargetPoint) const
 	Projectile->SetOwner(GetOwner());
 	Projectile->FinishSpawning({Rotator,Location});
 	Projectile->SetLifeSpan(5);
-	UE::AudioEditor::PlaySound(FireAudio);
+
+	if(USoundBase* Sound = LoadObject<USoundBase>(
+		GetOwner(), TEXT("/Script/Engine.SoundCue'/Game/Audio/SoundEffect/FIre_Cue.FIre_Cue'")))
+	{
+		UGameplayStatics::PlaySoundAtLocation(GetWorld(),Sound,GetMuzzleLocation());
+	}
 }
 
 int AWeapon::GetMaxModuleNumber() const
