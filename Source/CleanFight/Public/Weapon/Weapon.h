@@ -59,6 +59,9 @@ public:
 
 	UPROPERTY(EditAnywhere,Category="Weapon")
 	FString WeaponName;
+
+	UPROPERTY(EditAnywhere,Category="Audio")
+	TObjectPtr<USoundWave>FireAudio;
 protected:
 	virtual void BeginPlay() override;
 

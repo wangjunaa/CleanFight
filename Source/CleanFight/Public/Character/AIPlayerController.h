@@ -26,7 +26,7 @@ public:
 	AActor* GetClosestEnemy() const;
 	void LookForwardEnemy();
 
-
+	
 private: 
 	
 };

@@ -1,6 +1,7 @@
 
 #include "Weapon/Weapon.h"
 
+#include "AssetTypeActions/AssetDefinition_SoundBase.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Prop/WeaponModule.h"
@@ -28,6 +29,7 @@ void AWeapon::MakeShoot(const FVector& TargetPoint) const
 	Projectile->SetOwner(GetOwner());
 	Projectile->FinishSpawning({Rotator,Location});
 	Projectile->SetLifeSpan(5);
+	UE::AudioEditor::PlaySound(FireAudio);
 }
 
 int AWeapon::GetMaxModuleNumber() const
