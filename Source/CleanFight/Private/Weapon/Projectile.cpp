@@ -45,7 +45,13 @@ void AProjectile::OnProjectileHit(UPrimitiveComponent* HitComponent, AActor* Oth
 		{
 			HitVfxComp->PlayVfxOnHit(Hit);
 			AController* OwnerController=Cast<ABaseCharacter>(GetOwner())->GetController();
-			Hit.GetActor()->TakeDamage(ProjectileDamage,FDamageEvent(),OwnerController,this);
+			USoundBase* Sound=LoadObject<USoundBase>(GetOwner(),TEXT("/Script/Engine.SoundWave'/Game/Audio/SoundEffect/HitOnLand.HitOnLand'"));
+			if(ABaseCharacter* Character= Cast<ABaseCharacter>(Hit.GetActor()))
+			{ 
+				Character->TakeDamage(ProjectileDamage,FDamageEvent(),OwnerController,this);
+				Sound=LoadObject<USoundBase>(GetOwner(),TEXT("/Script/Engine.SoundWave'/Game/Audio/SoundEffect/HitOnBody.HitOnBody'"));
+			}
+			UGameplayStatics::PlaySoundAtLocation(GetWorld(),Sound,GetActorLocation());
 		}
 	}
 	Destroy();
