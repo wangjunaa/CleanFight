@@ -17,7 +17,7 @@ public:
 	UPROPERTY(VisibleAnywhere,Category="Comp")
 	TObjectPtr<USceneComponent> SceneComp; 
 	
-	UPROPERTY(VisibleAnywhere,Category="Comp")
+	UPROPERTY(VisibleAnywhere,BlueprintReadWrite,Category="Comp")
 	TObjectPtr<UCapsuleComponent> CollisionComp;
 	UPROPERTY(EditAnywhere,BlueprintReadWrite,Category="Prop")
 	TObjectPtr<UStaticMeshComponent>PropMesh; 

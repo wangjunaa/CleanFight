@@ -9,12 +9,14 @@
 #include "Components/CapsuleComponent.h"  
 #include "GameFramework/CharacterMovementComponent.h" 
 #include "GameFramework/SpringArmComponent.h"
+#include "Net/UnrealNetwork.h"
 #include "Weapon/Weapon.h"
 
 DEFINE_LOG_CATEGORY_STATIC(LogBaseCharacter, All, All)
 
 ABaseCharacter::ABaseCharacter()
-{
+{ 
+	bReplicates=true;
 	PrimaryActorTick.bCanEverTick = false;
 	//创建组件
 	CameraComponent=CreateDefaultSubobject<UCameraComponent>("CameraComponent");
@@ -51,8 +53,24 @@ ABaseCharacter::ABaseCharacter()
 	//设置运动属性
 	if(UCharacterMovementComponent* CharacterMovementComponent=GetCharacterMovement())
 	{
-		CharacterMovementComponent->MaxWalkSpeed=WalkSpeed;
+		CharacterMovementComponent->MaxWalkSpeed=WalkSpeed; 
 	}
+}
+
+
+void ABaseCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	DOREPLIFETIME(ABaseCharacter,bStiffness);
+	DOREPLIFETIME(ABaseCharacter,bAiming);
+	DOREPLIFETIME(ABaseCharacter,bCrouch);
+	DOREPLIFETIME(ABaseCharacter,bRunning);
+	DOREPLIFETIME(ABaseCharacter,bIsFiring); 
+	DOREPLIFETIME(ABaseCharacter,CameraComponent); 
+	DOREPLIFETIME(ABaseCharacter,WeaponComponent); 
+	DOREPLIFETIME(ABaseCharacter,HealthComponent); 
+	DOREPLIFETIME(ABaseCharacter,PlayerStatComponent); 
+	
 }
 
 void ABaseCharacter::BeginPlay()
@@ -60,7 +78,7 @@ void ABaseCharacter::BeginPlay()
 	Super::BeginPlay();
 	if(HealthComponent)
 	{
-		HealthComponent->OnDeath.AddUObject(this,&ABaseCharacter::OnDeath);
+		HealthComponent->OnDeath.AddDynamic(this,&ABaseCharacter::OnDeath);
 	} 
 }
 
@@ -101,7 +119,7 @@ void ABaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 		} 
 		if(RunAction)
 		{
-			EnhancedInputComponent->BindAction(RunAction,ETriggerEvent::Triggered,this,&ABaseCharacter::Action_Running);
+			EnhancedInputComponent->BindAction(RunAction,ETriggerEvent::Started,this,&ABaseCharacter::Action_Running);
 			EnhancedInputComponent->BindAction(RunAction,ETriggerEvent::Completed,this,&ABaseCharacter::Action_EndRun);
 		}
 		if(CrouchAction)
@@ -115,7 +133,7 @@ void ABaseCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 			EnhancedInputComponent->BindAction(AimAction,ETriggerEvent::Completed,this,&ABaseCharacter::Action_EndAim);
 		}
 		if(FireAction) 
-		{ 
+		{  
 			EnhancedInputComponent->BindAction(FireAction,ETriggerEvent::Triggered,this,&ABaseCharacter::Action_OnFire);
 			EnhancedInputComponent->BindAction(FireAction,ETriggerEvent::Completed,this,&ABaseCharacter::Action_OnEndFire);
 		} 
@@ -145,7 +163,6 @@ void ABaseCharacter::AddExperience(int Amount)
 		UpgradeNum++;
 		ExperienceValue-=GetMaxExperience();
 	}
-	
 }
 
 void ABaseCharacter::OnUpgrade()
@@ -178,27 +195,40 @@ int ABaseCharacter::GetMaxExperience() const
 	return 100+Level*50;
 }
 
+void ABaseCharacter::UpdateSpeed_Implementation() const
+{
+	// if(GetLocalRole()==ROLE_Authority)GEngine->AddOnScreenDebugMessage(-1,1,FColor::Black,L"服务器更改速度");
+	// if(GetLocalRole()==ROLE_AutonomousProxy)GEngine->AddOnScreenDebugMessage(-1,1,FColor::Black,L"本地客户端更改速度");
+	// if(GetLocalRole()==ROLE_SimulatedProxy)GEngine->AddOnScreenDebugMessage(-1,1,FColor::Black,L"模拟客户端更改速度");
+	// GEngine->AddOnScreenDebugMessage(-1,1,FColor::Blue,FString::Printf(TEXT("是否奔跑:%hhd"),bRunning));
+	if(IsCrouch())	GetCharacterMovement()->MaxWalkSpeed=CrouchSpeed;
+	else if(IsAiming()) GetCharacterMovement()->MaxWalkSpeed=WalkSpeed;
+	else if(IsRunning())  GetCharacterMovement()->MaxWalkSpeed=RunSpeed;
+	else GetCharacterMovement()->MaxWalkSpeed=WalkSpeed;
+	
+}
+ 
+
 void ABaseCharacter::Action_MoveForward(const FInputActionValue& Value)
 {
 	if(!Can_Move())return; 
-	if(IsCrouch())	GetCharacterMovement()->MaxWalkSpeed=CrouchSpeed;
-	else  GetCharacterMovement()->MaxWalkSpeed=WalkSpeed;
+	UpdateSpeed();
 	UE_LOG(LogBaseCharacter,Display,TEXT("前后移动"));
 	AddMovementInput(CameraComponent->GetForwardVector(),Value.Get<float>());
 }
 
+
 void ABaseCharacter::Action_MoveRight(const FInputActionValue& Value)
 {
 	if(!Can_Move())return;
-
+	UpdateSpeed();
 	UE_LOG(LogBaseCharacter,Display,TEXT("左右移动"));
 	AddMovementInput(CameraComponent->GetRightVector(),Value.Get<float>());
-	
 }
 
 void ABaseCharacter::Action_Jump()
 {
-	if(!Can_Jump())return;
+	if(!Can_Jump())return; 
 	UE_LOG(LogBaseCharacter,Display,TEXT("跳跃"));
 	Jump();
 }
@@ -215,48 +245,33 @@ void ABaseCharacter::Action_LookUp(const FInputActionValue& Value)
 	AddControllerPitchInput(Value.Get<float>());
 }
 
-void ABaseCharacter::Action_Running()
+void ABaseCharacter::Action_Running_Implementation()
 {
-	if(!Can_Run())return; 
-	//瞄准时不奔跑
-	if(IsAiming())
-	{
-		Action_MoveForward(1);
-		return; 
-	} 
-	if(!bRunning)
-	{
-		UE_LOG(LogBaseCharacter,Display,TEXT("开始奔跑"));
-		check(GetCharacterMovement());
-		bRunning=true; 
-	}
-	GetCharacterMovement()->MaxWalkSpeed=RunSpeed;
-	AddMovementInput(CameraComponent->GetForwardVector());
-}
-
-void ABaseCharacter::Action_EndRun()
+	if(!Can_Run())return;   
+	check(GetCharacterMovement());
+	bRunning=true; 
+} 
+void ABaseCharacter::Action_EndRun_Implementation()
 {
 	UE_LOG(LogBaseCharacter,Display,TEXT("结束奔跑")); 
 	check(GetCharacterMovement());  
 	bRunning=false;
-}
-
-void ABaseCharacter::Action_Crouch()
-{
+} 
+void ABaseCharacter::Action_Crouch_Implementation()
+{ 
 	if(IsStiff() || IsRunning())return;
 	UE_LOG(LogBaseCharacter,Display,TEXT("蹲下")); 
 	bCrouch=true;
 	check(GetCharacterMovement()); 
-}
-
-void ABaseCharacter::Action_EndCrouch()
+} 
+void ABaseCharacter::Action_EndCrouch_Implementation()
 {
+
 	UE_LOG(LogBaseCharacter,Display,TEXT("起身")); 
 	bCrouch=false; 
 	check(GetCharacterMovement()); 
 }
-
-void ABaseCharacter::Action_StartAim()
+void ABaseCharacter::Action_StartAim_Implementation()
 {
 	check(CameraComponent);
 	check(GetWorld());
@@ -264,8 +279,7 @@ void ABaseCharacter::Action_StartAim()
 	GetController()->GetPawn()->bUseControllerRotationYaw=true;
 	bAiming=true;
 }
-
-void ABaseCharacter::Action_EndAim()
+void ABaseCharacter::Action_EndAim_Implementation()
 {
 	check(CameraComponent);
 	check(GetWorld());  
@@ -273,7 +287,6 @@ void ABaseCharacter::Action_EndAim()
 	GetController()->GetPawn()->bUseControllerRotationYaw=false;
 	bAiming=false;
 }
-
 void ABaseCharacter::AimScaleAmplifier()
 {
 	//每次放大多少
@@ -315,20 +328,22 @@ FHitResult ABaseCharacter::GetAimResult() const
 	return HitResult;
 }
 
-void ABaseCharacter::Action_OnFire()
-{
+
+void ABaseCharacter::Action_OnFire_Implementation()
+{ 
 	if(!WeaponComponent)return;
 	WeaponComponent->Fire();
 	bIsFiring=true;
-}
+} 
 
-void ABaseCharacter::Action_OnEndFire()
+void ABaseCharacter::Action_OnEndFire_Implementation()
 {
 	bIsFiring=false;
 }
-
+ 
 void ABaseCharacter::OnDeath(AController* InstigatedBy) 
 {
+	GEngine->AddOnScreenDebugMessage(01,1,FColor::Blue,L"角色死亡");
 	//停止控制
 	GetCharacterMovement()->DisableMovement();  
 	if (Controller)

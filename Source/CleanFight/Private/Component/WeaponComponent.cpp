@@ -26,6 +26,12 @@ void UWeaponComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActo
 	
 }
 
+// AWeapon* UWeaponComponent::GetCurrentWeapon_Implementation() const
+// {
+// 	if(CurrentWeaponIndex>=WeaponList.Num())return nullptr;
+// 	return WeaponList[CurrentWeaponIndex];
+// }
+
 AWeapon* UWeaponComponent::GetCurrentWeapon() const
 {
 	if(CurrentWeaponIndex>=WeaponList.Num())return nullptr;

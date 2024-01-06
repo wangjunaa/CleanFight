@@ -37,7 +37,6 @@ public:
 	  
 	UPROPERTY(VisibleAnywhere,Category="Projectile")
 	TObjectPtr<UHitVFXComponent> HitVfxComp;
-	 
 	
 	UPROPERTY(EditAnywhere,Category="Damage")
 	int ProjectileDamage=10;

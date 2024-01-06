@@ -13,6 +13,7 @@
 DEFINE_LOG_CATEGORY_STATIC(LogProjectile,All,All)
 AProjectile::AProjectile()
 {
+	bReplicates=true;
 	PrimaryActorTick.bCanEverTick = false;
 	CollisionComp=CreateDefaultSubobject<USphereComponent>("CollisionComp");
 	ProjectileMovement=CreateDefaultSubobject<UProjectileMovementComponent>("ProjectileMovement");
@@ -28,7 +29,8 @@ AProjectile::AProjectile()
 void AProjectile::BeginPlay()
 {
 	Super::BeginPlay();
-	CollisionComp->OnComponentHit.AddDynamic(this,&AProjectile::OnProjectileHit);
+	CollisionComp->OnComponentHit.AddDynamic(this,&AProjectile::OnProjectileHit); 
+
 }
 
 void AProjectile::OnProjectileHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp,
@@ -47,8 +49,12 @@ void AProjectile::OnProjectileHit(UPrimitiveComponent* HitComponent, AActor* Oth
 			AController* OwnerController=Cast<ABaseCharacter>(GetOwner())->GetController();
 			USoundBase* Sound=LoadObject<USoundBase>(GetOwner(),TEXT("/Script/Engine.SoundWave'/Game/Audio/SoundEffect/HitOnLand.HitOnLand'"));
 			if(ABaseCharacter* Character= Cast<ABaseCharacter>(Hit.GetActor()))
-			{ 
-				Character->TakeDamage(ProjectileDamage,FDamageEvent(),OwnerController,this);
+			{
+				if(GetLocalRole()==ROLE_Authority)
+				{
+					Character->TakeDamage(ProjectileDamage, FDamageEvent(), OwnerController, this);
+					GEngine->AddOnScreenDebugMessage(01,1,FColor::Blue,L"子弹射中");
+				}
 				Sound=LoadObject<USoundBase>(GetOwner(),TEXT("/Script/Engine.SoundWave'/Game/Audio/SoundEffect/HitOnBody.HitOnBody'"));
 			}
 			UGameplayStatics::PlaySoundAtLocation(GetWorld(),Sound,GetActorLocation());

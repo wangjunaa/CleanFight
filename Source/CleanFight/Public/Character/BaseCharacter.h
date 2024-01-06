@@ -21,17 +21,18 @@ public:
 	ABaseCharacter();
 	
 	//基础组件
-	UPROPERTY(VisibleAnywhere,BlueprintReadWrite,Category="Comp")
+	UPROPERTY(VisibleAnywhere,Replicated,BlueprintReadWrite,Category="Comp")
 	TObjectPtr<UCameraComponent> CameraComponent;
 	UPROPERTY(VisibleAnywhere,BlueprintReadWrite,Category="Comp")
 	TObjectPtr<USpringArmComponent> SpringArmComponent;
-	UPROPERTY(VisibleAnywhere,BlueprintReadWrite,Category="Comp")
+	UPROPERTY(VisibleAnywhere,Replicated,BlueprintReadWrite,Category="Comp")
 	TObjectPtr<UWeaponComponent> WeaponComponent;  
-	UPROPERTY(VisibleAnywhere,BlueprintReadWrite,Category="Comp")
+	UPROPERTY(VisibleAnywhere,Replicated,BlueprintReadWrite,Category="Comp")
 	TObjectPtr<UHealthComponent> HealthComponent;
-	UPROPERTY(VisibleAnywhere,BlueprintReadWrite,Category="Comp")
+	UPROPERTY(VisibleAnywhere,Replicated,BlueprintReadWrite,Category="Comp")
 	TObjectPtr<UPlayerStateComponent> PlayerStatComponent;
- 
+
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 protected:
 	virtual void BeginPlay() override;
 	
@@ -60,33 +61,46 @@ protected:
 	TObjectPtr<UInputAction> NextWeaponAction; 
 	UPROPERTY(EditAnywhere,Category="Input")
 	TObjectPtr<UInputAction> LastWeaponAction;
-	UPROPERTY(EditAnywhere,Category="Movement")
+	UPROPERTY(EditAnywhere,Replicated,Category="Movement")
 	float CrouchSpeed=50;
-	UPROPERTY(EditAnywhere,Category="Movement")
+	UPROPERTY(EditAnywhere,Replicated,Category="Movement")
 	float WalkSpeed=100;
-	UPROPERTY(EditAnywhere,Category="Movement")
+	UPROPERTY(EditAnywhere,Replicated,Category="Movement")
 	float RunSpeed=200;
-	UPROPERTY()
 	//判断是否在僵直
+	UPROPERTY(Replicated)
 	bool bStiffness=false; 
 	//判断是否蹲下
+	UPROPERTY(Replicated)
 	bool bCrouch=false; 
+	UPROPERTY(Replicated)
 	bool bAiming=false;
+	UPROPERTY(Replicated)
 	bool bRunning=false;
 
 	//输入绑定委托
-	void Action_MoveForward(const FInputActionValue& Value); 
+	UFUNCTION(Server,Unreliable)
+	void UpdateSpeed() const;  
+	void Action_MoveForward(const FInputActionValue& Value);    
 	void Action_MoveRight(const FInputActionValue& Value);  
-	void Action_Jump();
-	void Action_TurnAround(const FInputActionValue& Value);
+	void Action_Jump(); 
+	void Action_TurnAround(const FInputActionValue& Value); 
 	void Action_LookUp(const FInputActionValue& Value);
+	UFUNCTION(Server,Reliable)
 	void Action_Running();
+	UFUNCTION(Server,Reliable)
 	void Action_EndRun();
+	UFUNCTION(Server,Reliable)
 	void Action_Crouch();
-	void Action_EndCrouch();
-	void Action_StartAim();
-	void Action_EndAim(); 
+	UFUNCTION(Server,Reliable)
+	void Action_EndCrouch(); 
+	UFUNCTION(Server,Reliable,Category="Input")
+	void Action_StartAim(); 
+	UFUNCTION(Server,Reliable,Category="Input")
+	void Action_EndAim();
+	UFUNCTION(Server,Reliable,Category="Input")
 	void Action_OnFire();
+	UFUNCTION(Server,Reliable,Category="Input")
 	void Action_OnEndFire();
 	//调用计时器的速率
 	const float AimScaleRate=0.01;
@@ -103,7 +117,8 @@ protected:
 	//视角缩小
 	void AimScaleReduce();
 	FHitResult GetAimResult() const;
- 
+
+	UPROPERTY(Replicated)
 	bool bIsFiring=false;
 
 	UFUNCTION()

@@ -4,8 +4,8 @@
 #include "Components/ActorComponent.h"
 #include "HealthComponent.generated.h"
 
-DECLARE_MULTICAST_DELEGATE_OneParam(FOnDeath,AController*)
-DECLARE_MULTICAST_DELEGATE_OneParam(FOnHealthChanged,int)
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnDeath,AController*,Killer);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnHealthChanged,int,Amount);
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class CLEANFIGHT_API UHealthComponent : public UActorComponent
@@ -33,19 +33,23 @@ public:
 	void AddMaxHealth(float Amount){MaxHealth+=Amount;AddHealth(Amount);};
 	UFUNCTION(BlueprintCallable,Category="Health")
 	void AddHealValue(float Amount){HealValue+=Amount;};
-	
+
+	UPROPERTY(BlueprintAssignable,Category="Health")
 	FOnDeath OnDeath;
+	UPROPERTY(BlueprintAssignable,Category="Health")
 	FOnHealthChanged OnHealthChanged;
-	
+
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 private: 
 	FTimerHandle HealTimerHandle;
-	
+
+	UPROPERTY(Replicated)
 	float Health;
-	UPROPERTY(EditDefaultsOnly,Category="Health",meta=(ClampMin=0)) 
+	UPROPERTY(EditDefaultsOnly,Replicated,Category="Health",meta=(ClampMin=0)) 
 	float MaxHealth=100;
 	UPROPERTY(EditAnywhere,Category="Health|Heal")
 	bool AutoHeal=true;
-	UPROPERTY(EditAnywhere,Category="Health|Heal",meta=(EditCondition="AutoHeal"))
+	UPROPERTY(EditAnywhere,Replicated,Category="Health|Heal",meta=(EditCondition="AutoHeal"))
 	float HealValue=0.01;
 	UPROPERTY(EditAnywhere,Category="Health|Heal",meta=(EditCondition="AutoHeal"))
 	float HealUpdateTime=0.01;
