@@ -4,11 +4,13 @@
 
 #include "NiagaraFunctionLibrary.h"
 #include "Character/BaseCharacter.h"
+#include "Net/UnrealNetwork.h"
 #include "Weapon/Weapon.h" 
 
 DEFINE_LOG_CATEGORY_STATIC(LogWeaponComp,All,All);
 UWeaponComponent::UWeaponComponent()
 {
+	SetIsReplicated(true);
 	PrimaryComponentTick.bCanEverTick = true;
 }
 
@@ -18,6 +20,13 @@ void UWeaponComponent::BeginPlay()
 	Super::BeginPlay();
 	SpawnWeapon();
 	ModuleBag.SetNum(MaxBagNum); 
+}
+
+void UWeaponComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	DOREPLIFETIME(UWeaponComponent,WeaponList);
+	DOREPLIFETIME(UWeaponComponent,ModuleBag);
 }
 
 void UWeaponComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
@@ -81,6 +90,7 @@ void UWeaponComponent::MakeShoot()
 	const float FireRate=GetCurrentWeapon()->GetFireRate();
 	GetWorld()->GetTimerManager().SetTimer(FireCDTimerHandle, this,&UWeaponComponent::FireCDFinish,FireRate,false,FireRate);
 }
+ 
 
 bool UWeaponComponent::AddWeapon(AWeapon* NewWeapon)
 {
@@ -93,18 +103,17 @@ bool UWeaponComponent::AddWeapon(AWeapon* NewWeapon)
 		NewWeapon->SetVisibility(false); 
 	return true;
 }
-
-bool UWeaponComponent::RemoveWeapon(int Index)
+ 
+void UWeaponComponent::RemoveWeapon_Implementation(int Index)
 {
-	if(Index>=WeaponList.Num())return false;
+	if(Index>=WeaponList.Num())return ;
 	WeaponList[Index]->Destroy();
 	WeaponList.RemoveAt(Index);
 	NextWeapon();
-	LastWeapon();
-	return true; 
+	LastWeapon(); 
 }
 
-void UWeaponComponent::NextWeapon()
+void UWeaponComponent::NextWeapon_Implementation()
 {
 	if(WeaponList.Num()==0 || !GetCurrentWeapon())return;
 	GetCurrentWeapon()->SetVisibility(false);
@@ -117,8 +126,8 @@ void UWeaponComponent::NextWeapon()
 		UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(),SwitchWeaponVfx,Location,Rotator);
 	}
 }
-  
-void UWeaponComponent::LastWeapon()
+ 
+void UWeaponComponent::LastWeapon_Implementation()
 {
 	if(WeaponList.Num()==0 || !GetCurrentWeapon())return;
 	GetCurrentWeapon()->SetVisibility(false);
@@ -217,8 +226,8 @@ AController* UWeaponComponent::GetOwnerController() const
 	const ABaseCharacter* Owner=Cast<ABaseCharacter>(GetOwner());
 	return Owner->GetController();
 }
-
-void UWeaponComponent::SpawnWeapon()
+ 
+void UWeaponComponent::SpawnWeapon_Implementation()
 {
 	if(DefaultWeaponClassList.Num()==0)return;
 	const ABaseCharacter* Character=Cast<ABaseCharacter>(GetOwner());

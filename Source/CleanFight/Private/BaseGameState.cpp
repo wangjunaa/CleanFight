@@ -19,7 +19,10 @@ void ABaseGameState::Tick(float DeltaSeconds)
 void ABaseGameState::BeginPlay()
 {
 	Super::BeginPlay();
-	GetWorldTimerManager().SetTimer(EnemySpawnTimerHandle,this,&ABaseGameState::SpawnEnemy,GetEnemySpawnRate(),false);
+	if(bSpawnEnemy)
+	{
+		GetWorldTimerManager().SetTimer(EnemySpawnTimerHandle,this,&ABaseGameState::SpawnEnemy,GetEnemySpawnRate(),false);
+	}
 }
 
 FText ABaseGameState::GetPlayTime()

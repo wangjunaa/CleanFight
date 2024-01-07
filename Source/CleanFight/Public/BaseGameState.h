@@ -34,4 +34,6 @@ private:
 	float EnemySpawnRadius=1000;
 	float GetEnemySpawnRate() const;
 	FTimerHandle EnemySpawnTimerHandle;
+	UPROPERTY(EditAnywhere)
+	bool bSpawnEnemy=true;
 };

@@ -6,6 +6,7 @@
 #include "WeaponComponent.generated.h"
 
 
+class AWeaponModule;
 class UNiagaraSystem;
 class AWeapon;
  
@@ -23,6 +24,7 @@ protected:
 	UPROPERTY(EditAnywhere,Category="Weapon")
 	FName WeaponSocketName="WeaponSocket";
 
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 public:	
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
@@ -38,12 +40,12 @@ public:
 	void MakeShoot(); 
 	UFUNCTION(BlueprintCallable,Category="Weapon")
 	bool AddWeapon(AWeapon* NewWeapon);
-	UFUNCTION(BlueprintCallable,Category="Weapon")
-	bool RemoveWeapon(int Index);
+	UFUNCTION(BlueprintCallable,Server,Reliable,Category="Weapon")
+	void RemoveWeapon(int Index);
 	
-	UFUNCTION(BlueprintCallable,Category="Weapon")
+	UFUNCTION(BlueprintCallable,Server,Reliable,Category="Weapon")
 	void NextWeapon();
-	UFUNCTION(BlueprintCallable,Category="Weapon")
+	UFUNCTION(BlueprintCallable,Server,Reliable,Category="Weapon")
 	void LastWeapon();
 	
 	UFUNCTION(BlueprintCallable,Category="Bag")
@@ -69,16 +71,18 @@ private:
 	TArray<TSubclassOf<AWeapon>> DefaultWeaponClassList;
 	UPROPERTY(EditAnywhere,Category="VFX")
 	TObjectPtr<UNiagaraSystem>SwitchWeaponVfx;
-	
+	UPROPERTY(Replicated)
 	TArray<AWeapon*> WeaponList;
 	  
 	FTimerHandle FireCDTimerHandle;
+	UFUNCTION(Server,Reliable)
 	void SpawnWeapon(); 
 	bool bFireInCD=false;
 	void FireCDFinish(){bFireInCD=false;}
 	float FireRange=10000;
 	int MaxWeaponNumber=4;
 	
+	UPROPERTY(Replicated)
 	TArray<AWeaponModule*> ModuleBag;
 	int MaxBagNum=132;
 };

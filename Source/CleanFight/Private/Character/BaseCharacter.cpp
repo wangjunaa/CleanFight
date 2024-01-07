@@ -197,10 +197,6 @@ int ABaseCharacter::GetMaxExperience() const
 
 void ABaseCharacter::UpdateSpeed_Implementation() const
 {
-	// if(GetLocalRole()==ROLE_Authority)GEngine->AddOnScreenDebugMessage(-1,1,FColor::Black,L"服务器更改速度");
-	// if(GetLocalRole()==ROLE_AutonomousProxy)GEngine->AddOnScreenDebugMessage(-1,1,FColor::Black,L"本地客户端更改速度");
-	// if(GetLocalRole()==ROLE_SimulatedProxy)GEngine->AddOnScreenDebugMessage(-1,1,FColor::Black,L"模拟客户端更改速度");
-	// GEngine->AddOnScreenDebugMessage(-1,1,FColor::Blue,FString::Printf(TEXT("是否奔跑:%hhd"),bRunning));
 	if(IsCrouch())	GetCharacterMovement()->MaxWalkSpeed=CrouchSpeed;
 	else if(IsAiming()) GetCharacterMovement()->MaxWalkSpeed=WalkSpeed;
 	else if(IsRunning())  GetCharacterMovement()->MaxWalkSpeed=RunSpeed;
