@@ -11,7 +11,7 @@ DEFINE_LOG_CATEGORY_STATIC(LogWeaponComp,All,All);
 UWeaponComponent::UWeaponComponent()
 {
 	SetIsReplicated(true);
-	PrimaryComponentTick.bCanEverTick = true;
+	PrimaryComponentTick.bCanEverTick = false;
 }
 
 
@@ -28,12 +28,7 @@ void UWeaponComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Out
 	DOREPLIFETIME(UWeaponComponent,WeaponList);
 	DOREPLIFETIME(UWeaponComponent,ModuleBag);
 }
-
-void UWeaponComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
-{
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
-	
-}
+ 
 
 // AWeapon* UWeaponComponent::GetCurrentWeapon_Implementation() const
 // {
