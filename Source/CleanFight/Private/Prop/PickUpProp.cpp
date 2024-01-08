@@ -6,6 +6,7 @@
 
 APickUpProp::APickUpProp()
 {
+	bReplicates=true;
 	PrimaryActorTick.bCanEverTick = false;
 	CollisionComp = CreateDefaultSubobject<UCapsuleComponent>("CollisionComp");
 	SetRootComponent(CollisionComp);

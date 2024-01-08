@@ -84,7 +84,16 @@ void ABaseGameState::SpawnEnemy()
 	const FTransform Transform={{0,0,0},NavLocation.Location};
 	GetWorld()->SpawnActor<AAICharacter>(EnemyList[Index],Transform);
 	GetWorldTimerManager().SetTimer(EnemySpawnTimerHandle,this,&ABaseGameState::SpawnEnemy,GetEnemySpawnRate(),false);
+}
 
+float ABaseGameState::GetTime()
+{
+	return PlayTime;
+}
+
+void ABaseGameState::SetTime(float Time)
+{
+	PlayTime=Time; 
 }
 
 float ABaseGameState::GetEnemySpawnRate() const

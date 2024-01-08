@@ -24,6 +24,10 @@ public:
 	FString GetDifficultText()const;
 	UFUNCTION(BlueprintCallable)
 	void SpawnEnemy();
+	UFUNCTION(BlueprintCallable)
+	float GetTime(); 
+	UFUNCTION(BlueprintCallable)
+	void SetTime(float Time);
 	
 	UPROPERTY(EditAnywhere)
 	TArray<TSubclassOf<AAICharacter>>EnemyList; 
