@@ -10,15 +10,14 @@
 DEFINE_LOG_CATEGORY_STATIC(LogWeaponComp,All,All);
 UWeaponComponent::UWeaponComponent()
 {
-	SetIsReplicated(true);
+	SetIsReplicatedByDefault(true);
 	PrimaryComponentTick.bCanEverTick = false;
 }
-
 
 void UWeaponComponent::BeginPlay()
 {
 	Super::BeginPlay();
-	SpawnWeapon();
+
 	ModuleBag.SetNum(MaxBagNum); 
 }
 
@@ -28,13 +27,6 @@ void UWeaponComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Out
 	DOREPLIFETIME(UWeaponComponent,WeaponList);
 	DOREPLIFETIME(UWeaponComponent,ModuleBag);
 }
- 
-
-// AWeapon* UWeaponComponent::GetCurrentWeapon_Implementation() const
-// {
-// 	if(CurrentWeaponIndex>=WeaponList.Num())return nullptr;
-// 	return WeaponList[CurrentWeaponIndex];
-// }
 
 AWeapon* UWeaponComponent::GetCurrentWeapon() const
 {

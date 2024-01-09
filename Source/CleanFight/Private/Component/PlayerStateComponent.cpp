@@ -5,7 +5,8 @@
 
 UPlayerStateComponent::UPlayerStateComponent()
 {
-	SetIsReplicated(true);
+	SetIsReplicatedByDefault(true);
+
 	PrimaryComponentTick.bCanEverTick = false; 
 }
 
